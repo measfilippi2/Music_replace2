@@ -319,7 +319,7 @@
     }
     document.getElementById('btn-playlists').addEventListener('click', toggleSpotifyPanel);
 
-    async function loadUserPlaylists() {
+  async function loadUserPlaylists() {
       if (!activeToken) return;
       try {
         const res = await fetch('https://api.spotify.com/v1/me/playlists?limit=30', {
@@ -331,9 +331,10 @@
         if (data.items) {
           data.items.forEach(pl => {
             const img = (pl.images && pl.images.length) ? pl.images[0].url : '';
+            const totalTracks = pl.tracks?.total ?? 0; // Gestisce in modo sicuro le tracce totali
             const div = document.createElement('div');
             div.className = 'playlist-item';
-            div.innerHTML = `<img src="${img}" /><div><strong>${pl.name}</strong><br><span style="color:#aaa;">${pl.tracks.total} brani</span></div>`;
+            div.innerHTML = `<img src="${img}" /><div><strong>${pl.name}</strong><br><span style="color:#aaa;">${totalTracks} brani</span></div>`;
             div.onclick = () => {
               if (img) {
                 coverImage.src = img;
@@ -341,7 +342,7 @@
               }
               document.getElementById('lyric-ghost').textContent = 'PLAYLIST';
               document.getElementById('lyric-line-1').textContent = pl.name.toUpperCase();
-              document.getElementById('lyric-line-2').textContent = `${pl.tracks.total} BRANI`;
+              document.getElementById('lyric-line-2').textContent = `${totalTracks} BRANI`;
             };
             container.appendChild(div);
           });
@@ -350,7 +351,6 @@
         console.error("Errore playlist:", e);
       }
     }
-
     const urlParams = new URLSearchParams(window.location.search);
     const authCode = urlParams.get('code');
     const savedToken = localStorage.getItem('spotify_access_token');
