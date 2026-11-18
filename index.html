@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aether Audio Visualizer & Desktop Setup</title>
+  <title>Aether Audio Visualizer & Spotify</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,600;0,700;1,700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -14,25 +14,12 @@
       --orange-core: #ff5500;
       --crimson-edge: #cc2222;
       --hud-cyan: #5ce1e6;
-      --glass-bg: rgba(12, 15, 24, 0.55);
+      --glass-bg: rgba(12, 15, 24, 0.75);
       --glass-border: rgba(255, 255, 255, 0.12);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-    }
-
-    body, html {
-      width: 100%;
-      height: 100%;
-      background-color: var(--bg-deep);
-      color: #ffffff;
-      font-family: 'Chakra Petch', sans-serif;
-      overflow: hidden;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body, html { width: 100%; height: 100%; background-color: var(--bg-deep); color: #ffffff; font-family: 'Chakra Petch', sans-serif; overflow: hidden; }
 
     #viewport {
       position: relative;
@@ -41,269 +28,75 @@
       overflow: hidden;
       background: radial-gradient(circle at 65% 45%, #121520 0%, #05060a 60%, #020204 100%);
       box-shadow: inset 0 0 90px rgba(255, 136, 40, 0.25), inset 0 0 24px rgba(255, 85, 0, 0.45);
-      transition: box-shadow 0.1s ease-out;
     }
 
-    #bg-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
-    #visualizer-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 4;
-      pointer-events: none;
-    }
+    #bg-canvas, #visualizer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    #bg-canvas { z-index: 1; }
+    #visualizer-canvas { z-index: 4; pointer-events: none; }
 
     .top-right-clock {
-      position: absolute;
-      top: 22px;
-      right: 28px;
-      z-index: 10;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.35rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      color: rgba(255, 255, 255, 0.85);
-      text-shadow: 0 0 12px rgba(255, 170, 68, 0.5);
+      position: absolute; top: 22px; right: 28px; z-index: 10;
+      font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 600;
+      color: rgba(255, 255, 255, 0.85); text-shadow: 0 0 12px rgba(255, 170, 68, 0.5);
     }
 
-    .lyric-container {
-      position: absolute;
-      top: 16%;
-      left: 11%;
-      z-index: 8;
-      pointer-events: none;
-      max-width: 520px;
-    }
-
-    .lyric-ghost {
-      font-size: 1.35rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: rgba(255, 255, 255, 0.28);
-      text-transform: uppercase;
-      margin-bottom: -10px;
-      margin-left: -14px;
-      filter: blur(0.4px);
-      transition: transform 0.25s ease, opacity 0.25s ease;
-    }
-
-    .lyric-main {
-      font-size: clamp(2rem, 3.6vw, 3.1rem);
-      font-weight: 700;
-      line-height: 1.02;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #ffffff;
-      text-shadow:
-        0 2px 14px rgba(0, 0, 0, 0.85),
-        0 0 22px rgba(255, 180, 90, 0.45);
-      transition: transform 0.08s ease-out;
-    }
-
-    .lyric-sub {
-      display: block;
-      font-size: clamp(1.7rem, 3vw, 2.5rem);
-      color: rgba(240, 244, 255, 0.92);
-      margin-left: 26px;
-    }
+    .lyric-container { position: absolute; top: 16%; left: 11%; z-index: 8; pointer-events: none; max-width: 520px; }
+    .lyric-ghost { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.12em; color: rgba(255, 255, 255, 0.28); text-transform: uppercase; margin-bottom: -10px; margin-left: -14px; }
+    .lyric-main { font-size: clamp(2rem, 3.6vw, 3.1rem); font-weight: 700; line-height: 1.02; letter-spacing: 0.05em; text-transform: uppercase; color: #ffffff; text-shadow: 0 2px 14px rgba(0,0,0,0.85), 0 0 22px rgba(255,180,90,0.45); }
+    .lyric-sub { display: block; font-size: clamp(1.7rem, 3vw, 2.5rem); color: rgba(240, 244, 255, 0.92); margin-left: 26px; }
 
     .hud-widget {
-      position: absolute;
-      bottom: 68px;
-      left: 24px;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      position: absolute; bottom: 68px; left: 24px; z-index: 10;
+      display: flex; align-items: center; gap: 14px;
       background: linear-gradient(135deg, rgba(16, 18, 28, 0.72), rgba(8, 10, 16, 0.45));
-      border: 1px solid rgba(255, 140, 50, 0.28);
-      border-radius: 16px;
-      padding: 10px 18px 10px 10px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), inset 0 0 15px rgba(255, 100, 30, 0.12);
+      border: 1px solid rgba(255, 140, 50, 0.28); border-radius: 16px; padding: 10px 18px 10px 10px;
+      backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0,0,0,0.65);
     }
-
     .hud-dial {
-      position: relative;
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: relative; width: 68px; height: 68px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
       background: radial-gradient(circle, #1a0b12 45%, #3a0d16 100%);
       box-shadow: 0 0 18px rgba(255, 65, 30, 0.45);
     }
+    .hud-dial svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+    .hud-dial-core { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 1.5px solid rgba(255, 190, 90, 0.8); background: #0d1326; }
+    .hud-dial-core img { width: 100%; height: 100%; object-fit: cover; }
+    .hud-stats { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; line-height: 1.45; color: rgba(235, 240, 255, 0.85); }
+    .hud-stats .tag { color: var(--amber-glow); font-weight: 700; margin-right: 6px; }
 
-    .hud-dial svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      transform: rotate(-90deg);
+    /* Pannello Playlist Spotify a comparsa */
+    .spotify-panel {
+      position: absolute; top: 80px; right: 28px; width: 320px; max-height: 60vh;
+      background: var(--glass-bg); border: 1px solid rgba(255, 170, 68, 0.3); border-radius: 16px;
+      backdrop-filter: blur(16px); z-index: 30; display: none; flex-direction: column; overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.8);
     }
-
-    .hud-dial-core {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 1.5px solid rgba(255, 190, 90, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #0d1326;
+    .spotify-panel.open { display: flex; }
+    .spotify-header { padding: 14px; background: rgba(255,100,30,0.15); font-weight: 700; font-size: 0.9rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;}
+    .spotify-list { overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .playlist-item {
+      display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; background: rgba(255,255,255,0.03);
+      cursor: pointer; transition: background 0.2s; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;
     }
+    .playlist-item:hover { background: rgba(255,170,68,0.2); }
+    .playlist-item img { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; }
 
-    .hud-dial-core img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .hud-stats {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.74rem;
-      line-height: 1.45;
-      color: rgba(235, 240, 255, 0.85);
-    }
-
-    .hud-stats .tag {
-      color: var(--amber-glow);
-      font-weight: 700;
-      margin-right: 6px;
-    }
-
-    .hud-bar-track {
-      width: 110px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 2px;
-      margin-top: 4px;
-      overflow: hidden;
-    }
-
-    .hud-bar-fill {
-      height: 100%;
-      width: 42%;
-      background: linear-gradient(90deg, #ff4422, #ffbb55);
-      transition: width 0.1s ease-out;
-    }
-
+    /* Taskbar */
     .taskbar {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      background: rgba(14, 17, 26, 0.68);
-      border: 1px solid var(--glass-border);
-      border-radius: 14px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75);
+      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 20;
+      display: flex; align-items: center; gap: 8px; padding: 6px 14px;
+      background: rgba(14, 17, 26, 0.68); border: 1px solid var(--glass-border); border-radius: 14px;
+      backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75);
     }
-
     .tb-btn {
-      appearance: none;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.05);
-      color: #e8ecf5;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 6px 11px;
-      border-radius: 9px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.18s ease;
+      appearance: none; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.05);
+      color: #e8ecf5; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;
+      padding: 6px 11px; border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.18s ease;
     }
-
-    .tb-btn:hover {
-      background: rgba(255, 170, 68, 0.18);
-      border-color: rgba(255, 170, 68, 0.5);
-      color: #ffffff;
-      transform: translateY(-1px);
-    }
-
-    .tb-btn.active {
-      background: linear-gradient(135deg, rgba(255, 110, 30, 0.35), rgba(255, 180, 70, 0.25));
-      border-color: var(--amber-glow);
-      color: #ffdd99;
-      box-shadow: 0 0 12px rgba(255, 130, 40, 0.35);
-    }
-
-    .tb-divider {
-      width: 1px;
-      height: 20px;
-      background: rgba(255, 255, 255, 0.12);
-      margin: 0 2px;
-    }
-
-    .track-pill {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: rgba(255, 255, 255, 0.72);
-      max-width: 175px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding: 0 6px;
-    }
-
-    .lyric-editor-popover {
-      position: absolute;
-      bottom: 62px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 25;
-      background: rgba(12, 15, 24, 0.9);
-      border: 1px solid rgba(255, 170, 68, 0.4);
-      border-radius: 12px;
-      padding: 12px;
-      backdrop-filter: blur(18px);
-      display: none;
-      gap: 8px;
-      align-items: center;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85);
-    }
-
-    .lyric-editor-popover.open {
-      display: flex;
-    }
-
-    .lyric-editor-popover input {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 7px;
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      padding: 6px 10px;
-      outline: none;
-      width: 140px;
-    }
-
-    .lyric-editor-popover input:focus {
-      border-color: var(--amber-glow);
-    }
-
-    input[type="file"] {
-      display: none;
-    }
+    .tb-btn:hover { background: rgba(255, 170, 68, 0.18); border-color: rgba(255, 170, 68, 0.5); color: #ffffff; }
+    .tb-btn.active { background: linear-gradient(135deg, rgba(255, 110, 30, 0.35), rgba(255, 180, 70, 0.25)); border-color: var(--amber-glow); color: #ffdd99; }
+    .tb-divider { width: 1px; height: 20px; background: rgba(255, 255, 255, 0.12); margin: 0 2px; }
+    .track-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: rgba(255, 255, 255, 0.72); max-width: 190px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   </style>
 </head>
 <body>
@@ -313,11 +106,11 @@
 
     <div class="top-right-clock" id="clock">21:59</div>
 
-    <div class="lyric-container" id="lyric-box">
-      <div class="lyric-ghost" id="lyric-ghost">LEGEND</div>
+    <div class="lyric-container">
+      <div class="lyric-ghost" id="lyric-ghost">SPOTIFY</div>
       <div class="lyric-main">
-        <span id="lyric-line-1">AETHER PULSE</span>
-        <span class="lyric-sub" id="lyric-line-2">ORBITAL BASS</span>
+        <span id="lyric-line-1">AETHER VIBE</span>
+        <span class="lyric-sub" id="lyric-line-2">CONNECTED</span>
       </div>
     </div>
 
@@ -325,540 +118,159 @@
       <div class="hud-dial">
         <svg viewBox="0 0 72 72">
           <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="4" />
-          <circle id="hud-ring" cx="36" cy="36" r="30" fill="none" stroke="#ff6622" stroke-width="4"
-                  stroke-dasharray="188.5" stroke-dashoffset="75" stroke-linecap="round" />
+          <circle id="hud-ring" cx="36" cy="36" r="30" fill="none" stroke="#ff6622" stroke-width="4" stroke-dasharray="188.5" stroke-dashoffset="75" stroke-linecap="round" />
         </svg>
         <div class="hud-dial-core">
           <img id="hud-thumb" alt="Cover" />
         </div>
       </div>
       <div class="hud-stats">
-        <div><span class="tag">SYS.GAIN</span><span id="stat-db">-4.2 dB</span></div>
-        <div><span class="tag">SUB.HZ</span><span id="stat-hz">58 Hz</span></div>
-        <div class="hud-bar-track">
-          <div class="hud-bar-fill" id="stat-bar"></div>
-        </div>
+        <div><span class="tag">SOURCE</span><span id="stat-source">SYNTH DEMO</span></div>
+        <div><span class="tag">BPM</span><span id="stat-hz">128</span></div>
       </div>
     </div>
 
-    <div class="lyric-editor-popover" id="lyric-popover">
-      <input type="text" id="in-ghost" value="LEGEND" placeholder="Testo fantasma" />
-      <input type="text" id="in-line1" value="AETHER PULSE" placeholder="Riga 1" />
-      <input type="text" id="in-line2" value="ORBITAL BASS" placeholder="Riga 2" />
+    <!-- Pannello Playlist -->
+    <div class="spotify-panel" id="spotify-panel">
+      <div class="spotify-header"><span>Le tue Playlist Spotify</span><span style="cursor:pointer;" onclick="toggleSpotifyPanel()">✕</span></div>
+      <div class="spotify-list" id="spotify-list-container">
+        <div class="playlist-item" style="justify-content:center; color:#aaa;">Effettua il login per caricare</div>
+      </div>
     </div>
 
     <div class="taskbar">
-      <button class="tb-btn active" id="btn-synth" title="Generatore Synth Reattivo">
-        <span>▶</span> Synth Demo
-      </button>
-
-      <label class="tb-btn" for="audio-upload" title="Carica MP3 / WAV / OGG">
-        <span>♫</span> Audio
-      </label>
-      <input type="file" id="audio-upload" accept="audio/*" />
-
-      <button class="tb-btn" id="btn-mic" title="Usa Microfono">
-        <span>🎙</span> Mic
-      </button>
-
+      <button class="tb-btn active" id="btn-synth">▶ Synth Demo</button>
+      <button class="tb-btn" id="spotify-login-btn" style="background:#1db954; color:#000; border:none; font-weight:700;">🟢 Login Spotify</button>
+      <button class="tb-btn" id="btn-playlists" style="display:none;">📂 Playlist</button>
       <div class="tb-divider"></div>
-
-      <label class="tb-btn" for="cover-upload" title="Cambia Immagine Centrale">
-        <span>🖼</span> Cover
-      </label>
-      <input type="file" id="cover-upload" accept="image/*" />
-
-      <button class="tb-btn" id="btn-lyrics" title="Modifica Testo HUD">
-        <span>✎</span> Testo
-      </button>
-
-      <div class="tb-divider"></div>
-      <div class="track-pill" id="track-name">COSMIC OVERDRIVE [SYNTH]</div>
+      <div class="track-pill" id="track-name">COSMIC OVERDRIVE</div>
     </div>
   </div>
 
-  <audio id="audio-player" crossorigin="anonymous"></audio>
-
   <script>
-    const viewport = document.getElementById('viewport');
+    // Configurazione Spotify API (Inserisci qui il tuo Client ID ottenuto dalla dashboard di Spotify)
+    const CLIENT_ID = 'fec6822870564007844726da9d4d0a22'; 
+    const REDIRECT_URI = window.location.href.split('?')[0]; // Prende l'URL corrente in automatico
+    const SCOPES = 'user-read-playback-state user-read-currently-playing playlist-read-private';
+
+    let accessToken = localStorage.getItem('spotify_token');
+
+    document.getElementById('spotify-login-btn').addEventListener('click', () => {
+      if (!CLIENT_ID || CLIENT_ID === 'fec6822870564007844726da9d4d0a22') {
+        alert("Inserisci prima il tuo Client ID di Spotify nel codice JavaScript!");
+        return;
+      }
+      const authUrl = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}`;
+      window.location.href = authUrl;
+    });
+
+    // Controlla se Spotify ha restituito il token nell'URL dopo il login
+    const hash = window.location.hash.substring(1).split('&').reduce((initial, item) => {
+      if (item) {
+        const parts = item.split('=');
+        initial[parts[0]] = decodeURIComponent(parts[1]);
+      }
+      return initial;
+    }, {});
+
+    if (hash.access_token) {
+      accessToken = hash.access_token;
+      localStorage.setItem('spotify_token', accessToken);
+      window.location.hash = '';
+    }
+
+    if (accessToken) {
+      document.getElementById('spotify-login-btn').style.display = 'none';
+      document.getElementById('btn-playlists').style.display = 'inline-flex';
+      fetchCurrentPlayback();
+      setInterval(fetchCurrentPlayback, 3000); // Aggiorna ogni 3 secondi la canzone in riproduzione
+    }
+
+    async function fetchCurrentPlayback() {
+      try {
+        const res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        if (res.status === 200) {
+          const data = await res.json();
+          if (data && data.item) {
+            const track = data.item;
+            document.getElementById('track-name').textContent = `${track.artists[0].name} - ${track.name}`;
+            document.getElementById('lyric-line-1').textContent = track.name.toUpperCase();
+            document.getElementById('lyric-line-2').textContent = track.artists[0].name.toUpperCase();
+            if (track.album.images.length > 0) {
+              const coverUrl = track.album.images[0].url;
+              document.getElementById('hud-thumb').src = coverUrl;
+            }
+            document.getElementById('stat-source').textContent = 'SPOTIFY LIVE';
+          }
+        }
+      } catch (e) { console.error("Errore Spotify sync", e); }
+    }
+
+    function toggleSpotifyPanel() {
+      const panel = document.getElementById('spotify-panel');
+      panel.classList.toggle('open');
+      if (panel.classList.contains('open')) loadUserPlaylists();
+    }
+
+    document.getElementById('btn-playlists').addEventListener('click', toggleSpotifyPanel);
+
+    async function loadUserPlaylists() {
+      try {
+        const res = await fetch('https://api.spotify.com/v1/me/playlists', {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        const data = await res.json();
+        const container = document.getElementById('spotify-list-container');
+        container.innerHTML = '';
+        if (data.items) {
+          data.items.forEach(pl => {
+            const img = pl.images.length ? pl.images[0].url : '';
+            container.innerHTML += `
+              <div class="playlist-item">
+                <img src="${img}" />
+                <div><strong>${pl.name}</strong><br><span style="color:#aaa;">${pl.tracks.total} brani</span></div>
+              </div>`;
+          });
+        }
+      } catch (e) { console.error("Errore caricamento playlist", e); }
+    }
+
+    // Gestione grafica di base canvas stelle/pianeta
     const bgCanvas = document.getElementById('bg-canvas');
     const bgCtx = bgCanvas.getContext('2d');
     const visCanvas = document.getElementById('visualizer-canvas');
     const visCtx = visCanvas.getContext('2d');
-
-    const clockEl = document.getElementById('clock');
-    const hudRing = document.getElementById('hud-ring');
-    const statDb = document.getElementById('stat-db');
-    const statHz = document.getElementById('stat-hz');
-    const statBar = document.getElementById('stat-bar');
-    const lyricBox = document.getElementById('lyric-box');
-    const trackNameEl = document.getElementById('track-name');
-
-    function createDefaultCoverDataURL() {
-      const c = document.createElement('canvas');
-      c.width = 400;
-      c.height = 400;
-      const ctx = c.getContext('2d');
-
-      const bg = ctx.createRadialGradient(200, 180, 20, 200, 200, 210);
-      bg.addColorStop(0, '#1e355e');
-      bg.addColorStop(0.55, '#0b1326');
-      bg.addColorStop(1, '#05070f');
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, 400, 400);
-
-      ctx.strokeStyle = 'rgba(92, 225, 230, 0.25)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(200, 200, 155, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.fillStyle = '#070a12';
-      ctx.beginPath();
-      ctx.moveTo(115, 360);
-      ctx.lineTo(130, 250);
-      ctx.lineTo(165, 225);
-      ctx.lineTo(175, 165);
-      ctx.arc(200, 165, 28, Math.PI, 0, false);
-      ctx.lineTo(235, 225);
-      ctx.lineTo(270, 250);
-      ctx.lineTo(285, 360);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.strokeStyle = '#ff6a2b';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-
-      ctx.fillStyle = '#5ce1e6';
-      ctx.shadowColor = '#5ce1e6';
-      ctx.shadowBlur = 16;
-      ctx.beginPath();
-      ctx.roundRect(178, 155, 44, 14, 6);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      ctx.fillStyle = '#ff9944';
-      ctx.font = '700 22px Chakra Petch, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('AETHER // 01', 200, 95);
-
-      return c.toDataURL('image/png');
-    }
-
-    const coverImage = new Image();
-    const defaultCoverUrl = createDefaultCoverDataURL();
-    coverImage.src = defaultCoverUrl;
-    document.getElementById('hud-thumb').src = defaultCoverUrl;
-
-    document.getElementById('cover-upload').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const url = URL.createObjectURL(file);
-      coverImage.src = url;
-      document.getElementById('hud-thumb').src = url;
-    });
-
-    function updateClock() {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      clockEl.textContent = `${h}:${m}`;
-    }
-    updateClock();
-    setInterval(updateClock, 10000);
-
-    const lyricPopover = document.getElementById('lyric-popover');
-    document.getElementById('btn-lyrics').addEventListener('click', () => {
-      lyricPopover.classList.toggle('open');
-    });
-
-    document.getElementById('in-ghost').addEventListener('input', (e) => {
-      document.getElementById('lyric-ghost').textContent = e.target.value || ' ';
-    });
-    document.getElementById('in-line1').addEventListener('input', (e) => {
-      document.getElementById('lyric-line-1').textContent = e.target.value || ' ';
-    });
-    document.getElementById('in-line2').addEventListener('input', (e) => {
-      document.getElementById('lyric-line-2').textContent = e.target.value || ' ';
-    });
-
-    let width = 0;
-    let height = 0;
-    let stars = [];
-
-    function initStars() {
-      stars = Array.from({ length: 160 }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: Math.random() * 1.4 + 0.3,
-        alpha: Math.random() * 0.75 + 0.15,
-        twinkle: Math.random() * 0.03 + 0.005
-      }));
-    }
+    let width = window.innerWidth, height = window.innerHeight;
 
     function resize() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      bgCanvas.width = width * dpr;
-      bgCanvas.height = height * dpr;
-      bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      visCanvas.width = width * dpr;
-      visCanvas.height = height * dpr;
-      visCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      initStars();
+      width = window.innerWidth; height = window.innerHeight;
+      bgCanvas.width = width; bgCanvas.height = height;
+      visCanvas.width = width; visCanvas.height = height;
     }
     window.addEventListener('resize', resize);
     resize();
 
-    function drawPlanetBackdrop(time, bassEnergy) {
+    function renderLoop(t) {
+      const time = t * 0.001;
       bgCtx.clearRect(0, 0, width, height);
-
-      for (const s of stars) {
-        const a = s.alpha + Math.sin(time * 2 + s.x) * 0.18;
-        bgCtx.fillStyle = `rgba(255, 248, 235, ${Math.max(0.05, Math.min(1, a))})`;
-        bgCtx.beginPath();
-        bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        bgCtx.fill();
-      }
-
-      const planetX = width * 0.62;
-      const planetY = height * 1.18;
-      const planetR = Math.max(width, height) * 0.76;
-
-      bgCtx.save();
-      const atmo = bgCtx.createRadialGradient(
-        planetX, planetY, planetR * 0.94,
-        planetX, planetY, planetR * (1.06 + bassEnergy * 0.03)
-      );
-      atmo.addColorStop(0, 'rgba(255, 210, 150, 0.0)');
-      atmo.addColorStop(0.45, `rgba(255, 195, 130, ${0.42 + bassEnergy * 0.25})`);
-      atmo.addColorStop(0.75, `rgba(255, 120, 45, ${0.18 + bassEnergy * 0.12})`);
-      atmo.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      bgCtx.fillStyle = atmo;
-      bgCtx.beginPath();
-      bgCtx.arc(planetX, planetY, planetR * 1.12, 0, Math.PI * 2);
-      bgCtx.fill();
-
-      bgCtx.beginPath();
-      bgCtx.arc(planetX, planetY, planetR, 0, Math.PI * 2);
-      bgCtx.clip();
-
-      const bodyGrad = bgCtx.createRadialGradient(
-        planetX - planetR * 0.18, planetY - planetR * 0.88, planetR * 0.05,
-        planetX, planetY, planetR
-      );
-      bodyGrad.addColorStop(0, '#5a606e');
-      bodyGrad.addColorStop(0.25, '#2b303b');
-      bodyGrad.addColorStop(0.6, '#12151c');
-      bodyGrad.addColorStop(1, '#050609');
-      bgCtx.fillStyle = bodyGrad;
-      bgCtx.fillRect(0, 0, width, height);
-
-      bgCtx.globalAlpha = 0.22;
-      for (let i = 0; i < 14; i++) {
-        const cx = planetX - planetR * 0.55 + ((i * 197) % (planetR * 1.1));
-        const cy = planetY - planetR * 0.92 + ((i * 131) % (planetR * 0.55));
-        const cr = 30 + (i % 5) * 28;
-        const crater = bgCtx.createRadialGradient(cx, cy, cr * 0.1, cx, cy, cr);
-        crater.addColorStop(0, 'rgba(10, 12, 18, 0.8)');
-        crater.addColorStop(0.7, 'rgba(75, 82, 98, 0.35)');
-        crater.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        bgCtx.fillStyle = crater;
-        bgCtx.beginPath();
-        bgCtx.arc(cx, cy, cr, 0, Math.PI * 2);
-        bgCtx.fill();
-      }
-      bgCtx.globalAlpha = 1;
-
-      bgCtx.strokeStyle = `rgba(255, 232, 195, ${0.65 + bassEnergy * 0.3})`;
-      bgCtx.lineWidth = 3 + bassEnergy * 2;
-      bgCtx.shadowColor = '#ffaa44';
-      bgCtx.shadowBlur = 24;
-      bgCtx.beginPath();
-      bgCtx.arc(planetX, planetY, planetR - 1, Math.PI * 1.05, Math.PI * 1.95);
-      bgCtx.stroke();
-      bgCtx.restore();
-    }
-
-    let audioCtx = null;
-    let analyser = null;
-    let freqData = null;
-    let mode = 'synth';
-    let synthPlaying = true;
-    let synthTimer = null;
-    let micStream = null;
-    let mediaSourceNode = null;
-
-    const audioEl = document.getElementById('audio-player');
-
-    function ensureAudioContext() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256;
-        analyser.smoothingTimeConstant = 0.82;
-        freqData = new Uint8Array(analyser.frequencyBinCount);
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
-
-    function stopCurrentSources() {
-      if (synthTimer) {
-        clearInterval(synthTimer);
-        synthTimer = null;
-      }
-      if (!audioEl.paused) {
-        audioEl.pause();
-      }
-      if (micStream) {
-        micStream.getTracks().forEach(t => t.stop());
-        micStream = null;
-      }
-    }
-
-    function setActiveBtn(id) {
-      document.querySelectorAll('.tb-btn').forEach(b => b.classList.remove('active'));
-      const el = document.getElementById(id);
-      if (el) el.classList.add('active');
-    }
-
-    function startSynthMode() {
-      stopCurrentSources();
-      mode = 'synth';
-      synthPlaying = true;
-      setActiveBtn('btn-synth');
-      trackNameEl.textContent = 'COSMIC OVERDRIVE [SYNTH]';
-
-      ensureAudioContext();
-      let step = 0;
-      const bassNotes = [55, 55, 65.41, 49, 55, 55, 73.42, 65.41];
-
-      synthTimer = setInterval(() => {
-        if (!synthPlaying || mode !== 'synth') return;
-        const now = audioCtx.currentTime;
-
-        if (step % 2 === 0) {
-          const kickOsc = audioCtx.createOscillator();
-          const kickGain = audioCtx.createGain();
-          kickOsc.type = 'sine';
-          kickOsc.frequency.setValueAtTime(135, now);
-          kickOsc.frequency.exponentialRampToValueAtTime(38, now + 0.16);
-          kickGain.gain.setValueAtTime(0.45, now);
-          kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-          kickOsc.connect(kickGain);
-          kickGain.connect(analyser);
-          kickGain.connect(audioCtx.destination);
-          kickOsc.start(now);
-          kickOsc.stop(now + 0.3);
-        }
-
-        const subOsc = audioCtx.createOscillator();
-        const subGain = audioCtx.createGain();
-        subOsc.type = 'sawtooth';
-        const freq = bassNotes[step % bassNotes.length];
-        subOsc.frequency.setValueAtTime(freq, now);
-
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(320 + (step % 4) * 140, now);
-
-        subGain.gain.setValueAtTime(0.16, now);
-        subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-
-        subOsc.connect(filter);
-        filter.connect(subGain);
-        subGain.connect(analyser);
-        subGain.connect(audioCtx.destination);
-        subOsc.start(now);
-        subOsc.stop(now + 0.24);
-
-        step++;
-      }, 240);
-    }
-
-    document.getElementById('btn-synth').addEventListener('click', () => {
-      if (mode === 'synth' && synthPlaying) {
-        synthPlaying = false;
-        document.getElementById('btn-synth').innerHTML = '<span>▶</span> Riprendi Synth';
-        document.getElementById('btn-synth').classList.remove('active');
-      } else {
-        document.getElementById('btn-synth').innerHTML = '<span>❚❚</span> Synth Demo';
-        startSynthMode();
-      }
-    });
-
-    document.getElementById('audio-upload').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      stopCurrentSources();
-      mode = 'file';
-      setActiveBtn(null);
-      ensureAudioContext();
-
-      if (!mediaSourceNode) {
-        mediaSourceNode = audioCtx.createMediaElementSource(audioEl);
-        mediaSourceNode.connect(analyser);
-        analyser.connect(audioCtx.destination);
-      }
-
-      audioEl.src = URL.createObjectURL(file);
-      audioEl.play();
-      trackNameEl.textContent = file.name.replace(/\.[^/.]+$/, '').toUpperCase();
-    });
-
-    document.getElementById('btn-mic').addEventListener('click', async () => {
-      try {
-        stopCurrentSources();
-        ensureAudioContext();
-        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const micSource = audioCtx.createMediaStreamSource(micStream);
-        micSource.connect(analyser);
-        mode = 'mic';
-        setActiveBtn('btn-mic');
-        trackNameEl.textContent = 'LIVE MICROPHONE INPUT';
-      } catch (err) {
-        trackNameEl.textContent = 'MIC NON DISPONIBILE';
-      }
-    });
-
-    const lyricSequences = [
-      ['LEGEND', 'AETHER PULSE', 'ORBITAL BASS'],
-      ['SYSTEM', 'NEON HORIZON', 'DEEP SPACE'],
-      ['SIGNAL', 'ZERO GRAVITY', 'OVERDRIVE'],
-      ['STATUS', 'SOLAR FLARE', 'FREQUENCY']
-    ];
-    let seqIndex = 0;
-    let lastBeatSwitch = 0;
-
-    function renderLoop(timestamp) {
-      const time = timestamp * 0.001;
-
-      if (analyser && freqData) {
-        analyser.getByteFrequencyData(freqData);
-      }
-
-      let bassSum = 0;
-      const bassBins = 12;
-      for (let i = 0; i < bassBins; i++) {
-        const val = freqData ? freqData[i] : (Math.sin(time * 4 + i) * 0.5 + 0.5) * 140;
-        bassSum += val;
-      }
-      const bassNorm = Math.min(1, (bassSum / (bassBins * 255)) * 1.25);
-
-      if (bassNorm > 0.76 && timestamp - lastBeatSwitch > 2800 && mode === 'synth') {
-        lastBeatSwitch = timestamp;
-        seqIndex = (seqIndex + 1) % lyricSequences.length;
-        const [g, l1, l2] = lyricSequences[seqIndex];
-        document.getElementById('lyric-ghost').textContent = g;
-        document.getElementById('lyric-line-1').textContent = l1;
-        document.getElementById('lyric-line-2').textContent = l2;
-      }
-
-      drawPlanetBackdrop(time, bassNorm);
-
       visCtx.clearRect(0, 0, width, height);
-      const cx = width * 0.55;
-      const cy = height * 0.50;
-      const baseRadius = Math.min(width, height) * 0.145;
-      const dynamicRadius = baseRadius + bassNorm * 16;
 
-      const outerGlow = visCtx.createRadialGradient(
-        cx, cy, dynamicRadius * 0.85,
-        cx, cy, dynamicRadius * 1.75
-      );
-      outerGlow.addColorStop(0, `rgba(255, 225, 160, ${0.55 + bassNorm * 0.35})`);
-      outerGlow.addColorStop(0.45, `rgba(255, 145, 50, ${0.32 + bassNorm * 0.25})`);
-      outerGlow.addColorStop(1, 'rgba(255, 90, 20, 0)');
-      visCtx.fillStyle = outerGlow;
-      visCtx.beginPath();
-      visCtx.arc(cx, cy, dynamicRadius * 1.75, 0, Math.PI * 2);
-      visCtx.fill();
+      // Sfondo Pianeta/Spazio
+      const planetX = width * 0.62, planetY = height * 1.18, planetR = Math.max(width, height) * 0.76;
+      bgCtx.fillStyle = '#05070f';
+      bgCtx.beginPath(); bgCtx.arc(planetX, planetY, planetR, 0, Math.PI * 2); bgCtx.fill();
 
-      const bars = 96;
-      visCtx.save();
-      visCtx.translate(cx, cy);
-      visCtx.rotate(time * 0.15);
-
-      for (let i = 0; i < bars; i++) {
-        const angle = (i / bars) * Math.PI * 2;
-        const binIndex = Math.floor((i % (bars / 2)) * (64 / (bars / 2)));
-        const rawVal = freqData
-          ? freqData[binIndex] / 255
-          : (Math.sin(time * 6 + i * 0.4) * 0.5 + 0.5) * 0.65;
-
-        const barHeight = 6 + Math.pow(rawVal, 1.35) * (54 + bassNorm * 24);
-        const x1 = Math.cos(angle) * (dynamicRadius + 3);
-        const y1 = Math.sin(angle) * (dynamicRadius + 3);
-        const x2 = Math.cos(angle) * (dynamicRadius + 3 + barHeight);
-        const y2 = Math.sin(angle) * (dynamicRadius + 3 + barHeight);
-
-        visCtx.strokeStyle = rawVal > 0.65
-          ? 'rgba(255, 248, 225, 0.96)'
-          : `rgba(255, 195, 110, ${0.55 + rawVal * 0.4})`;
-        visCtx.lineWidth = 3.2;
-        visCtx.lineCap = 'round';
-        visCtx.shadowColor = '#ffaa44';
-        visCtx.shadowBlur = 12;
-
-        visCtx.beginPath();
-        visCtx.moveTo(x1, y1);
-        visCtx.lineTo(x2, y2);
-        visCtx.stroke();
-      }
-      visCtx.restore();
-
-      visCtx.save();
-      visCtx.beginPath();
-      visCtx.arc(cx, cy, dynamicRadius, 0, Math.PI * 2);
-      visCtx.closePath();
-      visCtx.clip();
-
-      if (coverImage.complete && coverImage.naturalWidth > 0) {
-        const scale = (dynamicRadius * 2) / Math.min(coverImage.naturalWidth, coverImage.naturalHeight);
-        const iw = coverImage.naturalWidth * scale;
-        const ih = coverImage.naturalHeight * scale;
-        visCtx.drawImage(coverImage, cx - iw / 2, cy - ih / 2, iw, ih);
-      } else {
-        visCtx.fillStyle = '#0d1326';
-        visCtx.fillRect(cx - dynamicRadius, cy - dynamicRadius, dynamicRadius * 2, dynamicRadius * 2);
-      }
-      visCtx.restore();
-
-      visCtx.strokeStyle = 'rgba(255, 235, 190, 0.9)';
-      visCtx.lineWidth = 2.5;
-      visCtx.shadowColor = '#ff9933';
-      visCtx.shadowBlur = 16;
-      visCtx.beginPath();
-      visCtx.arc(cx, cy, dynamicRadius, 0, Math.PI * 2);
-      visCtx.stroke();
-      visCtx.shadowBlur = 0;
-
-      const edgeGlow = Math.round(22 + bassNorm * 28);
-      viewport.style.boxShadow = `inset 0 0 ${75 + bassNorm * 50}px rgba(255, 125, 35, ${0.28 + bassNorm * 0.25}), inset 0 0 ${edgeGlow}px rgba(255, 80, 20, ${0.45 + bassNorm * 0.35})`;
-
-      lyricBox.style.transform = `scale(${1 + bassNorm * 0.035})`;
-
-      const dashOffset = 188.5 - bassNorm * 165;
-      hudRing.style.strokeDashoffset = dashOffset.toFixed(1);
-      statBar.style.width = `${Math.round(18 + bassNorm * 82)}%`;
-      statDb.textContent = `${(-18 + bassNorm * 18).toFixed(1)} dB`;
-      statHz.textContent = `${Math.round(42 + bassNorm * 48)} Hz`;
+      // Visualizzatore cerchio centrale
+      const cx = width * 0.55, cy = height * 0.5, r = 90;
+      visCtx.strokeStyle = 'rgba(255, 170, 68, 0.8)';
+      visCtx.lineWidth = 3;
+      visCtx.beginPath(); visCtx.arc(cx, cy, r + Math.sin(time * 5) * 4, 0, Math.PI * 2); visCtx.stroke();
 
       requestAnimationFrame(renderLoop);
     }
-
-    document.body.addEventListener('pointerdown', () => {
-      if (!audioCtx) startSynthMode();
-    }, { once: true });
-
     requestAnimationFrame(renderLoop);
   </script>
 </body>
 </html>
-
