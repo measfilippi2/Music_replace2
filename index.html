@@ -374,45 +374,81 @@
       }
     }
 
-   async function loadPlaylistTracks(playlistId, playlistName) {
+   async function loadUserPlaylists() {
+      if (!activeToken) return;
+      document.getElementById('panel-title').textContent = Le tue Playlist;
+      document.getElementById('back-to-playlists').style.display = 'none';
+      const container = document.getElementById('spotify-list-container');
+      container.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">Caricamento playlist...</div>';
+
+      try {
+        let res = await fetch('https://api.spotify.com/v1/me/playlists?limit=50', {
+          headers: { 'Authorization': `Bearer ${activeToken}` }
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          activeToken = await refreshSpotifyToken();
+          if (!activeToken) return;
+          res = await fetch('https://api.spotify.com/v1/me/playlists?limit=50', {
+            headers: { 'Authorization': `Bearer ${activeToken}` }
+          });
+        }
+
+        const data = await res.json();
+        container.innerHTML = '';
+        
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(pl => {
+            if (!pl) return;
+            const img = (pl.images && pl.images.length) ? pl.images[0].url : '';
+            
+            const div = document.createElement('div');
+            div.className = 'playlist-item';
+            // Mostriamo direttamente il nome della playlist senza fidarci del contatore .total che a volte viene azzerato dalle API
+            div.innerHTML = `<img src="${img}" /><div><strong>${pl.name}</strong><br><span style="color:#aaa;">Apri playlist</span></div>`;
+            
+            div.onclick = () => loadPlaylistTracks(pl.id, pl.name);
+            container.appendChild(div);
+          });
+        } else {
+          container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">Nessuna playlist trovata.</div>';
+        }
+      } catch (e) {
+        console.error("Errore caricamento playlist:", e);
+        container.innerHTML = '<div style="color:#ff7777; padding:10px; text-align:center;">Errore di connessione.</div>';
+      }
+    }
+
+    async function loadPlaylistTracks(playlistId, playlistName) {
       if (!activeToken) return;
       document.getElementById('panel-title').textContent = playlistName;
       document.getElementById('back-to-playlists').style.display = 'inline-block';
       const container = document.getElementById('spotify-list-container');
-      container.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">Caricamento brani...</div>';
+      container.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">Caricamento brani in corso...</div>';
 
       try {
-        // Interroghiamo l'endpoint principale della playlist invece di /tracks
-        // che include già i brani in data.tracks.items ed evita molti blocchi 403
-        let res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}?market=from_token`, {
+        // Usiamo l'endpoint specifico dei brani con market per evitare filtri regionali restrittivi
+        let res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100&market=from_token`, {
           headers: { 'Authorization': `Bearer ${activeToken}` }
         });
 
-        if (res.status === 401) {
+        if (res.status === 401 || res.status === 403) {
           activeToken = await refreshSpotifyToken();
           if (!activeToken) return;
-          res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}?market=from_token`, {
+          res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100&market=from_token`, {
             headers: { 'Authorization': `Bearer ${activeToken}` }
           });
         }
         
         const data = await res.json();
-        console.log("Risposta endpoint playlist:", data); // Controlla in F12 se c'è un messaggio d'errore preciso
         container.innerHTML = '';
 
-        // Se Spotify restituisce comunque un errore, lo mostriamo a schermo
-        if (data.error) {
-          container.innerHTML = `<div style="color:#ff7777; padding:10px; text-align:center;">Errore Spotify (${data.error.status}): ${data.error.message}</div>`;
-          return;
-        }
-
-        // Estrae i brani da data.tracks.items (struttura dell'endpoint /v1/playlists/{id})
-        const items = (data.tracks && data.tracks.items) || data.items || [];
+        const items = data.items || [];
 
         if (items.length > 0) {
           let loadedCount = 0;
           items.forEach((item) => {
-            const track = item.track || item;
+            const track = item.track;
             if (!track || !track.name) return;
 
             loadedCount++;
@@ -429,14 +465,14 @@
           });
 
           if (loadedCount === 0) {
-            container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">Nessun brano valido trovato.</div>';
+            container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">La playlist contiene solo file locali o podcast non leggibili via API.</div>';
           }
         } else {
-          container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">La playlist risulta vuota.</div>';
+          container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">La playlist è vuota.</div>';
         }
       } catch (e) {
         console.error("Errore caricamento tracce:", e);
-        container.innerHTML = '<div style="color:#ff7777; padding:10px; text-align:center;">Errore di connessione.</div>';
+        container.innerHTML = '<div style="color:#ff7777; padding:10px; text-align:center;">Errore di caricamento tracce.</div>';
       }
     }
 
