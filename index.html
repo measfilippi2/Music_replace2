@@ -356,7 +356,8 @@
       }
     }
 
-    // 2. Carica i brani di una specifica playlist
+    
+// 2. Carica i brani di una specifica playlist o dei brani preferiti
     async function loadPlaylistTracks(playlistId, playlistName) {
       if (!activeToken) return;
       document.getElementById('panel-title').textContent = playlistName;
@@ -364,14 +365,24 @@
       const container = document.getElementById('spotify-list-container');
       container.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">Caricamento brani...</div>';
 
+      // Endpoint speciale se sono i Brani Preferiti
+      const endpoint = playlistId === 'liked_songs' 
+        ? 'https://api.spotify.com/v1/me/tracks?limit=50'
+        : `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=50`;
+
       try {
-        const res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=50`, {
+        const res = await fetch(endpoint, {
           headers: { 'Authorization': `Bearer ${activeToken}` }
         });
+        
+        if (!res.ok) {
+          throw new Error(`Errore HTTP: ${res.status}`);
+        }
+
         const data = await res.json();
         container.innerHTML = '';
 
-        if (data.items) {
+        if (data.items && data.items.length > 0) {
           data.items.forEach(item => {
             const track = item.track;
             if (!track) return;
@@ -382,7 +393,6 @@
             div.className = 'track-item';
             div.innerHTML = `<img src="${img}" /><div><strong>${track.name}</strong><br><span style="color:#aaa;">${artistNames}</span></div>`;
             
-            // Cliccando sul brano, lo mostra al centro del visualizzatore con la sua copertina
             div.onclick = () => {
               if (img) {
                 coverImage.crossOrigin = "anonymous";
@@ -396,10 +406,12 @@
             };
             container.appendChild(div);
           });
+        } else {
+          container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">Nessun brano trovato in questa playlist.</div>';
         }
       } catch (e) {
-        console.error("Errore caricamento brani playlist:", e);
-        container.innerHTML = '<div style="color:#ff7777; padding:10px;">Errore nel caricamento dei brani.</div>';
+        console.error("Errore caricamento brani:", e);
+        container.innerHTML = '<div style="color:#ff7777; padding:10px; text-align:center;">Accesso negato (403) o playlist protetta da Spotify.</div>';
       }
     }
 
