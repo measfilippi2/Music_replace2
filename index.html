@@ -366,14 +366,20 @@
         });
         
         const data = await res.json();
+        console.log("Dati traccie ricevuti da Spotify:", data); // Utile per debug in F12
+        
         container.innerHTML = '';
 
-        if (data.items && data.items.length > 0) {
-          data.items.forEach((item) => {
-            const track = item.track;
-            if (!track) return;
+        // Spotify a volte restituisce i brani direttamente in data.items oppure all'interno di un sotto-oggetto
+        const tracksArray = data.items || (data.tracks && data.tracks.items);
 
-            const trackName = track.name || "Nome non disponibile";
+        if (tracksArray && tracksArray.length > 0) {
+          tracksArray.forEach((item) => {
+            // Gestione sicura nel caso l'oggetto traccia sia nidificato diversamente
+            const track = item.track || item;
+            if (!track || !track.name) return;
+
+            const trackName = track.name;
             const artistNames = track.artists ? track.artists.map(a => a.name).join(', ') : 'Artista sconosciuto';
             const img = (track.album && track.album.images && track.album.images.length > 0) 
               ? track.album.images[track.album.images.length - 1].url 
@@ -385,7 +391,7 @@
             container.appendChild(div);
           });
         } else {
-          container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">Nessun brano trovato in questa playlist.</div>';
+          container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">La playlist è vuota o protetta.</div>';
         }
       } catch (e) {
         console.error("Errore caricamento tracce:", e);
@@ -393,6 +399,7 @@
       }
     }
 
+    
     document.getElementById('back-to-playlists').addEventListener('click', loadUserPlaylists);
 
     const urlParams = new URLSearchParams(window.location.search);
