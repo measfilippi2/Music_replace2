@@ -180,7 +180,7 @@
 document.getElementById('spotify-login-btn').addEventListener('click', () => {
       const authUrl = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}&show_dialog=true`;
       window.location.href = authUrl;
-    });;
+    });
 
     async function exchangeCodeForToken(code) {
       const codeVerifier = localStorage.getItem('spotify_code_verifier');
