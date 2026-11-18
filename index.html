@@ -18,7 +18,7 @@
       --glass-border: rgba(255, 255, 255, 0.12);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body, html { width: 100%; height: 100%; background-color: var(--bg-deep); color: #ffffff; font-family: 'Chakra Petch', sans-serif; overflow: hidden; }
 
     #viewport {
@@ -323,7 +323,6 @@
     }
     document.getElementById('btn-playlists').addEventListener('click', toggleSpotifyPanel);
 
-    // 1. Carica la lista delle playlist dell'utente
     async function loadUserPlaylists() {
       if (!activeToken) return;
       document.getElementById('panel-title').textContent = 'Le tue Playlist';
@@ -345,7 +344,6 @@
             div.className = 'playlist-item';
             div.innerHTML = `<img src="${img}" /><div><strong>${pl.name}</strong><br><span style="color:#aaa;">${totalTracks} brani</span></div>`;
             
-            // Cliccando sulla playlist, carica i brani al suo interno!
             div.onclick = () => loadPlaylistTracks(pl.id, pl.name);
             container.appendChild(div);
           });
@@ -355,7 +353,7 @@
       }
     }
 
-async function loadPlaylistTracks(playlistId, playlistName) {
+    async function loadPlaylistTracks(playlistId, playlistName) {
       if (!activeToken) return;
       document.getElementById('panel-title').textContent = playlistName;
       document.getElementById('back-to-playlists').style.display = 'inline-block';
@@ -368,17 +366,15 @@ async function loadPlaylistTracks(playlistId, playlistName) {
         });
         
         const data = await res.json();
-        console.log("RISPOSTA COMPLETA SPOTIFY:", data); // <-- CONTROLLA QUI IN CONSOLE
-        
         container.innerHTML = '';
 
         if (data.items && data.items.length > 0) {
-          data.items.forEach((item, index) => {
-            console.log(`Brano ${index}:`, item); // Stampa ogni singolo elemento in console
-            const track = item.track || item; // Tentativo di recupero alternativo
+          data.items.forEach((item) => {
+            const track = item.track;
+            if (!track) return;
 
             const trackName = track.name || "Nome non disponibile";
-            const artistNames = (track.artists) ? track.artists.map(a => a.name).join(', ') : 'Artista sconosciuto';
+            const artistNames = track.artists ? track.artists.map(a => a.name).join(', ') : 'Artista sconosciuto';
             const img = (track.album && track.album.images && track.album.images.length > 0) 
               ? track.album.images[track.album.images.length - 1].url 
               : '';
@@ -389,10 +385,11 @@ async function loadPlaylistTracks(playlistId, playlistName) {
             container.appendChild(div);
           });
         } else {
-          container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">L\'API restituisce 0 elementi in "items".</div>';
+          container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">Nessun brano trovato in questa playlist.</div>';
         }
       } catch (e) {
-        console.error("Errore:", e);
+        console.error("Errore caricamento tracce:", e);
+        container.innerHTML = '<div style="color:#ff7777; padding:10px; text-align:center;">Errore di caricamento.</div>';
       }
     }
 
