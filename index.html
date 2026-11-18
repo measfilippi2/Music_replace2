@@ -356,7 +356,7 @@
     }
 
     
-// 2. Carica i brani di una specifica playlist usando la nuova rotta /items
+// 2. Carica i brani di una specifica playlist con debug integrato
     async function loadPlaylistTracks(playlistId, playlistName) {
       if (!activeToken) return;
       document.getElementById('panel-title').textContent = playlistName;
@@ -365,8 +365,7 @@
       container.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">Caricamento brani...</div>';
 
       try {
-        // Aggiornato all'endpoint ufficiale /items richiesto da Spotify
-        const res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/items?limit=50`, {
+        const res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=50`, {
           headers: { 'Authorization': `Bearer ${activeToken}` }
         });
         
@@ -375,13 +374,18 @@
         }
 
         const data = await res.json();
+        console.log("Dati grezzi playlist ricevuti da Spotify:", data); // <-- Stampiamo i dati in console per debug
         container.innerHTML = '';
 
+        // Controlliamo se ci sono elementi nell'array
         if (data.items && data.items.length > 0) {
-          data.items.forEach(item => {
+          data.items.forEach((item, index) => {
             const track = item.track;
-            if (!track) return;
-            const img = (track.album && track.album.images.length) ? track.album.images[track.album.images.length - 1].url : '';
+            if (!track) return; // Salva eventuali tracce locali o rimosse che sono null
+
+            const img = (track.album && track.album.images && track.album.images.length > 0) 
+              ? track.album.images[track.album.images.length - 1].url 
+              : '';
             const artistNames = track.artists ? track.artists.map(a => a.name).join(', ') : 'Artista sconosciuto';
 
             const div = document.createElement('div');
@@ -402,15 +406,11 @@
             container.appendChild(div);
           });
         } else {
-          container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">Questa playlist è vuota.</div>';
+          container.innerHTML = '<div style="color:#aaa; padding:15px; text-align:center;">Nessun brano trovato in questa playlist.</div>';
         }
       } catch (e) {
         console.error("Errore caricamento brani playlist:", e);
-        container.innerHTML = `
-          <div style="padding:15px; text-align:center; color:#ff7777; font-size:0.75rem; line-height:1.4;">
-            <strong>Limitazione Spotify (403)</strong><br>
-            In modalità Developer, Spotify permette di leggere i brani <u>solo</u> dalle playlist create personalmente da te. Se la playlist è di terzi o di sistema, l'API la blocca.
-          </div>`;
+        container.innerHTML = `<div style="padding:15px; text-align:center; color:#ff7777; font-size:0.75rem;">Errore nel recupero dei brani.</div>`;
       }
     }
 
