@@ -41,11 +41,11 @@
       color: rgba(255, 255, 255, 0.85); text-shadow: 0 0 12px rgba(255, 170, 68, 0.5);
     }
 
-    /* Etichetta "stato di provenienza" vicino al globo */
+    /* Etichetta "stato di provenienza" posizionata sul lato destro del globo */
     .origin-callout {
       position: absolute;
-      top: 26%;
-      left: 25%;
+      top: 30%;
+      left: 26%;
       z-index: 10;
       pointer-events: none;
       display: flex;
@@ -54,15 +54,15 @@
       font-family: 'JetBrains Mono', monospace;
     }
     .origin-callout .arrow-line {
-      width: 44px;
+      width: 36px;
       height: 2px;
       background: linear-gradient(90deg, #ff5500, #ffaa44);
-      box-shadow: 0 0 10px rgba(255, 120, 40, 0.8);
-      transform: rotate(-22deg);
-      transform-origin: left center;
+      box-shadow: 0 0 10px rgba(255, 120, 40, 0.85);
+      transform: rotate(180deg);
+      transform-origin: center;
     }
     .origin-callout .callout-box {
-      background: rgba(16, 12, 14, 0.88);
+      background: rgba(16, 12, 14, 0.9);
       border: 1.5px solid #ff7733;
       border-radius: 6px;
       padding: 6px 12px;
@@ -80,7 +80,7 @@
       color: #ffbb66;
     }
 
-    /* Blocco in alto a destra: Titolo canzone e cose varie */
+    /* Blocco in alto a destra: Titolo canzone e info */
     .lyric-container {
       position: absolute;
       top: 42px;
@@ -153,7 +153,7 @@
     .hud-stats { font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; line-height: 1.5; color: rgba(240, 244, 255, 0.9); overflow: hidden; }
     .hud-stats .tag { color: var(--amber-glow); font-weight: 700; margin-right: 6px; }
 
-    /* Pannello playlist al centro-destra (sopra il box ORIGIN/STATUS) */
+    /* Pannello playlist al centro-destra */
     .spotify-panel {
       position: absolute;
       top: 158px;
@@ -217,7 +217,7 @@
 
     <div class="top-right-clock" id="clock">21:59</div>
 
-    <!-- Etichetta Stato di provenienza collegata al globo -->
+    <!-- Etichetta Stato di provenienza sul lato destro del globo -->
     <div class="origin-callout" id="origin-callout">
       <div class="arrow-line"></div>
       <div class="callout-box">
@@ -723,7 +723,6 @@
       document.getElementById('btn-next').style.display = 'inline-flex';
       document.getElementById('btn-logout').style.display = 'inline-flex';
 
-      // Apri automaticamente il riquadro playlist al login nello spazio centrale-destro
       const panel = document.getElementById('spotify-panel');
       if (!panel.classList.contains('open')) {
         panel.classList.add('open');
@@ -934,7 +933,6 @@
         String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
     }, 1000);
 
-    // --- TEXTURE CARTINA / CONTINENTI ARANCIONE-AMBRA ---
     function createWorldMapTexture() {
       const c = document.createElement('canvas');
       c.width = 1024;
@@ -981,11 +979,11 @@
       return tex;
     }
 
-    // --- GLOBO 3D GRANDE A SINISTRA ---
+    // --- GLOBO 3D RIDOTTO LEGGERMENTE CON MARKER VISIBILE ---
     const globeContainer = document.getElementById('globe-container');
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0, 5.2);
+    camera.position.set(0, 0, 5.6);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -993,8 +991,8 @@
     globeContainer.appendChild(renderer.domElement);
 
     const globeGroup = new THREE.Group();
-    globeGroup.position.set(-2.35, -0.15, 0);
-    globeGroup.scale.set(1.55, 1.55, 1.55);
+    globeGroup.position.set(-1.55, -0.15, 0);
+    globeGroup.scale.set(1.18, 1.18, 1.18);
     scene.add(globeGroup);
 
     const ambientLight = new THREE.AmbientLight(0xffe0b5, 1.15);
@@ -1013,10 +1011,15 @@
     const earthMesh = new THREE.Mesh(earthGeo, earthMat);
     globeGroup.add(earthMesh);
 
-    const pinGeo = new THREE.SphereGeometry(0.065, 16, 16);
-    const pinMat = new THREE.MeshBasicMaterial({ color: 0x6e2c0a });
+    const pinGeo = new THREE.SphereGeometry(0.085, 18, 18);
+    const pinMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const pinMesh = new THREE.Mesh(pinGeo, pinMat);
     globeGroup.add(pinMesh);
+
+    const haloGeo = new THREE.RingGeometry(0.11, 0.16, 24);
+    const haloMat = new THREE.MeshBasicMaterial({ color: 0x6e2c0a, side: THREE.DoubleSide });
+    const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+    globeGroup.add(haloMesh);
 
     function latLonToVector3(lat, lon, radius) {
       const phi = (90 - lat) * (Math.PI / 180);
@@ -1072,10 +1075,14 @@
       globeGroup.rotation.y += (desiredRotY - globeGroup.rotation.y) * Math.min(1, dt * 2.5);
       globeGroup.rotation.x += (desiredRotX - globeGroup.rotation.x) * Math.min(1, dt * 2.5);
 
-      const pinPos = latLonToVector3(playbackState.targetLat, playbackState.targetLon, 1.77);
+      const pinPos = latLonToVector3(playbackState.targetLat, playbackState.targetLon, 1.78);
       pinMesh.position.copy(pinPos);
+      haloMesh.position.copy(pinPos.clone().normalize().multiplyScalar(1.79));
+      haloMesh.lookAt(camera.position);
+
       const pinScale = 1 + bassKick * 0.65 * playbackState.energy;
       pinMesh.scale.set(pinScale, pinScale, pinScale);
+      haloMesh.scale.set(pinScale, pinScale, pinScale);
 
       renderer.render(scene, camera);
 
