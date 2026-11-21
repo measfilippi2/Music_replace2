@@ -226,6 +226,25 @@
     .tb-btn:hover { background: rgba(var(--accent-rgb), 0.25); border-color: var(--accent-main); }
     .tb-divider { width: 1px; height: 20px; background: rgba(255, 255, 255, 0.16); margin: 0 2px; }
     .track-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: rgba(255, 255, 255, 0.88); max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+
+    .origin-callout {
+      transition: opacity 0.35s ease, transform 0.35s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+    .origin-callout.hidden-space {
+      opacity: 0;
+      transform: translateX(-18px);
+      pointer-events: none;
+    }
+    .origin-callout.thasup-mode .callout-box {
+      border-color: #c084fc;
+      box-shadow: 0 0 22px rgba(168, 85, 247, 0.55);
+    }
+    .origin-callout.thasup-mode .callout-mini {
+      color: #e9d5ff;
+    }
+
+    
   </style>
 </head>
 <body>
@@ -383,7 +402,7 @@
       'olly': 'ITALIA', 'bresh': 'ITALIA', 'elodie': 'ITALIA',
       'annalisa': 'ITALIA', 'madame': 'ITALIA', 'angelina mango': 'ITALIA',
       'gaia': 'ITALIA', 'ariete': 'ITALIA', 'clara': 'ITALIA',
-      'ditonellapiaga': 'ITALIA',
+      'ditonellapiaga': 'ITALIA', 'young moonstar': 'ITALIA',
       // USA
       'drake': 'USA', 'travis scott': 'USA', 'kendrick lamar': 'USA', '21 savage': 'USA',
       'post malone': 'USA', 'future': 'USA', 'metro boomin': 'USA', 'lil baby': 'USA',
@@ -768,22 +787,72 @@
       return { name: fallback, coords: COUNTRY_COORDS[fallback] };
     }
 
-    // --- THASUP MONDO ---
+    // --- THASUP MONDO  ---
     let lastCheckedTrackKey = null;
     let isThasupSpaceActive = false;
     let thasupRig = null;
     let thasupSceneGroup = null;
+    let spaceArcLine = null;
+
+    const GLOBE_HOME_POS = new THREE.Vector3(-1.55, -0.15, 0);
+    const GLOBE_EXIT_POS = new THREE.Vector3(-5.8, -0.45, -2.2);
+
+    const THASUP_HOME_POS = new THREE.Vector3(-1.35, -0.05, 0.2);
+    const THASUP_ENTRY_POS = new THREE.Vector3(4.6, 0.35, -2.6);
+
+    const spaceTransition = {
+      active: false,
+      direction: 0, // +1 = verso mondo thasup, -1 = ritorno al globo
+      progress: 0,  // 0 -> 1
+      badgeSwapped: false
+    };
+
+    const spaceArcMat = new THREE.LineBasicMaterial({
+      color: 0xd8b4fe,
+      transparent: true,
+      opacity: 0.0
+    });
+
+    function setOriginCalloutForThasup() {
+      const callout = document.getElementById('origin-callout');
+      const miniEl = callout ? callout.querySelector('.callout-mini') : null;
+      const stateEl = document.getElementById('callout-country-name');
+      if (!callout || !miniEl || !stateEl) return;
+
+      miniEl.textContent = 'DIMENSIONE';
+      stateEl.textContent = 'IL MONDO DI THASUP';
+      callout.classList.add('thasup-mode');
+      callout.classList.remove('hidden-space');
+    }
+
+    function restoreOriginCallout(countryName) {
+      const callout = document.getElementById('origin-callout');
+      const miniEl = callout ? callout.querySelector('.callout-mini') : null;
+      const stateEl = document.getElementById('callout-country-name');
+      if (!callout || !miniEl || !stateEl) return;
+
+      callout.classList.remove('thasup-mode');
+      miniEl.textContent = 'STATO DI PROVENIENZA';
+      stateEl.textContent = countryName || document.getElementById('stat-origin').textContent || 'ITALIA';
+      callout.classList.remove('hidden-space');
+    }
+
+    function hideOriginCalloutTemporarily() {
+      const callout = document.getElementById('origin-callout');
+      if (callout) callout.classList.add('hidden-space');
+    }
 
     function isThasupMainTrack(track) {
       if (!track) return false;
 
       const artists = Array.isArray(track.artists) ? track.artists : [];
       const mainArtist = (artists[0]?.name || '').trim().toLowerCase();
-      const isMainThasup = mainArtist === 'thasup' || mainArtist === 'tha supreme';
+      const thasupAliases = new Set(['thasup', 'tha supreme', 'young moonstar']);
+      const isMainThasup = thasupAliases.has(mainArtist);
       if (!isMainThasup) return false;
 
       const title = (track.name || '').toLowerCase();
-      const thasupAsGuestInTitle = /\b(feat\.?|ft\.?)\b[^()[\]]*\b(thasup|tha supreme)\b/i.test(title);
+      const thasupAsGuestInTitle = /\b(feat\.?|ft\.?)\b[^()[\]]*\b(thasup|tha supreme|young moonstar)\b/i.test(title);
       return !thasupAsGuestInTitle;
     }
 
@@ -811,6 +880,7 @@
 
       const group = new THREE.Group();
       group.name = 'thasupSceneGroup';
+      group.position.copy(THASUP_ENTRY_POS);
       group.visible = false;
       targetScene.add(group);
 
@@ -945,25 +1015,70 @@
       };
     }
 
+    function updateSpaceBridgeArc(startVec, endVec, progress) {
+      if (typeof scene === 'undefined' || !scene || typeof THREE === 'undefined') return;
+      if (spaceArcLine) {
+        scene.remove(spaceArcLine);
+        spaceArcLine.geometry.dispose();
+        spaceArcLine = null;
+      }
+      if (!spaceTransition.active || progress <= 0.01) return;
+
+      const pts = [];
+      const segments = 48;
+      const arcLift = 1.15;
+      const maxIdx = Math.max(2, Math.floor(segments * Math.min(1, progress * 1.25)));
+
+      for (let i = 0; i <= maxIdx; i++) {
+        const t = i / segments;
+        const p = new THREE.Vector3().lerpVectors(startVec, endVec, t);
+        p.y += Math.sin(t * Math.PI) * arcLift;
+        p.z += Math.sin(t * Math.PI) * 0.65;
+        pts.push(p);
+      }
+
+      spaceArcMat.opacity = Math.sin(Math.min(1, progress) * Math.PI) * 0.85;
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      spaceArcLine = new THREE.Line(geo, spaceArcMat);
+      scene.add(spaceArcLine);
+    }
+
     function enterThasupSpace() {
       if (typeof applyThemeAccentColors === 'function') {
         applyThemeAccentColors([168, 85, 247], [232, 121, 249]);
       }
+
+      hideOriginCalloutTemporarily();
+
       if (typeof globeGroup !== 'undefined' && globeGroup) {
-        globeGroup.visible = false;
+        globeGroup.visible = true;
+      }
+      if (thasupSceneGroup) {
+        thasupSceneGroup.position.copy(THASUP_ENTRY_POS);
+        thasupSceneGroup.visible = true;
+      }
+
+      spaceTransition.active = true;
+      spaceTransition.direction = 1;
+      spaceTransition.progress = 0;
+      spaceTransition.badgeSwapped = false;
+    }
+
+    function exitThasupSpace() {
+      hideOriginCalloutTemporarily();
+
+      if (typeof globeGroup !== 'undefined' && globeGroup) {
+        globeGroup.visible = true;
       }
       if (thasupSceneGroup) {
         thasupSceneGroup.visible = true;
       }
-    }
 
-    function exitThasupSpace() {
-      if (thasupSceneGroup) {
-        thasupSceneGroup.visible = false;
-      }
-      if (typeof globeGroup !== 'undefined' && globeGroup) {
-        globeGroup.visible = true;
-      }
+      spaceTransition.active = true;
+      spaceTransition.direction = -1;
+      spaceTransition.progress = 0;
+      spaceTransition.badgeSwapped = false;
+
       if (
         typeof activeToken !== 'undefined' &&
         activeToken &&
@@ -981,6 +1096,86 @@
       ) {
         applyThemeAccentColors(DEFAULT_ACCENT_RGB, DEFAULT_SECONDARY_RGB);
       }
+    }
+
+    function updateThasupScene(nowMs = performance.now(), dt = 0.016) {
+      if (spaceTransition.active) {
+        spaceTransition.progress = Math.min(1, spaceTransition.progress + dt * 1.15);
+        const raw = spaceTransition.progress;
+        const ease = raw < 0.5 ? 4 * raw * raw * raw : 1 - Math.pow(-2 * raw + 2, 3) / 2;
+
+        if (spaceTransition.direction === 1) {
+          // Il globo scivola a sinistra e indietro, il mondo thasup entra da destra
+          if (typeof globeGroup !== 'undefined' && globeGroup) {
+            globeGroup.position.lerpVectors(GLOBE_HOME_POS, GLOBE_EXIT_POS, ease);
+          }
+          if (thasupSceneGroup) {
+            thasupSceneGroup.visible = true;
+            thasupSceneGroup.position.lerpVectors(THASUP_ENTRY_POS, THASUP_HOME_POS, ease);
+          }
+          updateSpaceBridgeArc(
+            globeGroup ? globeGroup.position : GLOBE_EXIT_POS,
+            thasupSceneGroup ? thasupSceneGroup.position : THASUP_HOME_POS,
+            ease
+          );
+
+          if (!spaceTransition.badgeSwapped && spaceTransition.progress >= 0.72) {
+            spaceTransition.badgeSwapped = true;
+            setOriginCalloutForThasup();
+          }
+
+          if (spaceTransition.progress >= 1) {
+            spaceTransition.active = false;
+            if (typeof globeGroup !== 'undefined' && globeGroup) {
+              globeGroup.visible = false;
+            }
+            updateSpaceBridgeArc(GLOBE_EXIT_POS, THASUP_HOME_POS, 0);
+          }
+        } else if (spaceTransition.direction === -1) {
+          // Il mondo thasup esce a destra e indietro, il globo rientra a sinistra
+          if (typeof globeGroup !== 'undefined' && globeGroup) {
+            globeGroup.visible = true;
+            globeGroup.position.lerpVectors(GLOBE_EXIT_POS, GLOBE_HOME_POS, ease);
+          }
+          if (thasupSceneGroup) {
+            thasupSceneGroup.position.lerpVectors(THASUP_HOME_POS, THASUP_ENTRY_POS, ease);
+          }
+          updateSpaceBridgeArc(
+            thasupSceneGroup ? thasupSceneGroup.position : THASUP_ENTRY_POS,
+            globeGroup ? globeGroup.position : GLOBE_HOME_POS,
+            ease
+          );
+
+          if (!spaceTransition.badgeSwapped && spaceTransition.progress >= 0.72) {
+            spaceTransition.badgeSwapped = true;
+            restoreOriginCallout();
+          }
+
+          if (spaceTransition.progress >= 1) {
+            spaceTransition.active = false;
+            if (thasupSceneGroup) {
+              thasupSceneGroup.visible = false;
+            }
+            updateSpaceBridgeArc(THASUP_ENTRY_POS, GLOBE_HOME_POS, 0);
+          }
+        }
+      }
+
+      if (!thasupRig || !thasupRig.group.visible) return;
+
+      const t = nowMs * 0.001;
+      const { planetMesh, atmosphereMesh, ringMesh, hoodEntity, haloRing } = thasupRig;
+
+      planetMesh.rotation.y += 0.004;
+      atmosphereMesh.rotation.y -= 0.0025;
+      ringMesh.rotation.z += 0.003;
+
+      hoodEntity.position.y = 0.35 + Math.sin(t * 2.2) * 0.12;
+      hoodEntity.rotation.y = Math.sin(t * 1.3) * 0.25;
+      hoodEntity.rotation.z = Math.cos(t * 1.7) * 0.05;
+
+      haloRing.position.y = 0.96 + Math.sin(t * 3.1) * 0.03;
+      haloRing.rotation.z += 0.015;
     }
 
     function updateThasupScene(nowMs = performance.now()) {
@@ -1002,8 +1197,10 @@
     }
 
     function updateOriginLabel(name) {
-      document.getElementById('stat-origin').textContent = name;
-      document.getElementById('callout-country-name').textContent = name;
+     document.getElementById('stat-origin').textContent = name;
+      if (!isThasupSpaceActive) {
+        document.getElementById('callout-country-name').textContent = name;
+      }
     }
 
     // --- ESTRAZIONE COLORE DOMINANTE DALLA COPERTINA ---
@@ -1914,7 +2111,7 @@
     window.addEventListener('resize', resize);
     resize();
 
-    function renderLoop(t) {
+    function renderLoop(t,dt) {
       const dt = Math.min(0.05, (t - lastFrameTime) * 0.001);
       lastFrameTime = t;
       let currentPosMs = playbackState.progressMs;
