@@ -348,7 +348,7 @@
 
       // Francia
       'ninho': 'FRANCIA', 'jul': 'FRANCIA', 'pnl': 'FRANCIA', 'damso': 'FRANCIA',
-      'gazo': 'FRANCIA', 'tiakola': 'FRANCIA', ' Hamza': 'FRANCIA', 'hamza': 'FRANCIA',
+      'gazo': 'FRANCIA', 'tiakola': 'FRANCIA', 'hamza': 'FRANCIA',
       'booba': 'FRANCIA', 'kaaris': 'FRANCIA', 'aya nakamura': 'FRANCIA', 'dj snake': 'FRANCIA',
       'david guetta': 'FRANCIA', 'daft punk': 'FRANCIA', 'm83': 'FRANCIA',
 
@@ -444,28 +444,6 @@
       originCache.set(cacheKey, fallback);
       return { name: fallback, coords: COUNTRY_COORDS[fallback] };
     }
-    function detectOriginCountry(track) {
-      if (!track) return { name: 'ITALIA', coords: COUNTRY_COORDS['ITALIA'] };
-      const artistName = (track.artists && track.artists[0] && track.artists[0].name)
-        ? track.artists[0].name.toLowerCase().trim()
-        : '';
-
-      if (ARTIST_COUNTRY_MAP[artistName]) {
-        const country = ARTIST_COUNTRY_MAP[artistName];
-        return { name: country, coords: COUNTRY_COORDS[country] };
-      }
-
-      const markets = track.available_markets || (track.album && track.album.available_markets) || [];
-      if (markets.includes('IT') && markets.length < 40) {
-        return { name: 'ITALIA', coords: COUNTRY_COORDS['ITALIA'] };
-      }
-      if (markets.includes('GB') && markets.length < 40) {
-        return { name: 'UK', coords: COUNTRY_COORDS['UK'] };
-      }
-
-      return { name: 'USA', coords: COUNTRY_COORDS['USA'] };
-    }
-
     function updateOriginLabel(name) {
       document.getElementById('stat-origin').textContent = name;
       document.getElementById('callout-country-name').textContent = name;
@@ -1217,8 +1195,7 @@
     globeGroup.add(new THREE.Mesh(atmoGeo, atmoMat));
     
     
-    const earthMesh = new THREE.Mesh(earthGeo, earthMat);
-    globeGroup.add(earthMesh);
+    
 
     const pinGeo = new THREE.SphereGeometry(0.085, 18, 18);
     const pinMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
