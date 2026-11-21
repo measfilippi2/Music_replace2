@@ -10,9 +10,11 @@
   <style>
     :root {
       --bg-deep: #040508;
-      --amber-glow: #ffaa44;
-      --orange-core: #ff5500;
-      --crimson-edge: #cc2222;
+      --accent-rgb: 255, 170, 68;
+      --accent-secondary-rgb: 255, 95, 20;
+      --accent-main: rgb(var(--accent-rgb));
+      --accent-soft: rgba(var(--accent-rgb), 0.35);
+      --accent-glow: rgba(var(--accent-rgb), 0.55);
       --hud-cyan: #5ce1e6;
       --glass-bg: rgba(12, 15, 24, 0.85);
       --glass-border: rgba(255, 255, 255, 0.12);
@@ -26,11 +28,22 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background: radial-gradient(circle at 28% 50%, rgba(255, 130, 30, 0.16) 0%, #070910 55%, #020204 100%);
-      box-shadow: inset 0 0 90px rgba(255, 136, 40, 0.25), inset 0 0 24px rgba(255, 85, 0, 0.45);
+      background:
+        radial-gradient(ellipse at 22% 35%, rgba(var(--accent-rgb), 0.16) 0%, transparent 48%),
+        radial-gradient(ellipse at 72% 28%, rgba(125, 65, 220, 0.15) 0%, transparent 52%),
+        radial-gradient(ellipse at 62% 78%, rgba(35, 130, 210, 0.13) 0%, transparent 55%),
+        radial-gradient(circle at 45% 50%, #0b0e1a 0%, #05060c 62%, #020205 100%);
+      box-shadow: inset 0 0 90px rgba(var(--accent-rgb), 0.22), inset 0 0 24px rgba(var(--accent-secondary-rgb), 0.38);
+      transition: box-shadow 0.45s ease;
     }
 
-    #globe-container, #visualizer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    #galaxy-canvas, #globe-container, #visualizer-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #galaxy-canvas { z-index: 0; pointer-events: none; }
     #globe-container { z-index: 1; }
     #globe-container canvas { display: block; width: 100%; height: 100%; }
     #visualizer-canvas { z-index: 4; pointer-events: none; }
@@ -38,7 +51,7 @@
     .top-right-clock {
       position: absolute; top: 14px; right: 24px; z-index: 15;
       font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 600;
-      color: rgba(255, 255, 255, 0.85); text-shadow: 0 0 12px rgba(255, 170, 68, 0.5);
+      color: rgba(255, 255, 255, 0.88); text-shadow: 0 0 12px var(--accent-glow);
     }
 
     /* Etichetta "stato di provenienza" posizionata sul lato destro del globo */
@@ -56,28 +69,30 @@
     .origin-callout .arrow-line {
       width: 36px;
       height: 2px;
-      background: linear-gradient(90deg, #ff5500, #ffaa44);
-      box-shadow: 0 0 10px rgba(255, 120, 40, 0.85);
+      background: linear-gradient(90deg, rgb(var(--accent-secondary-rgb)), var(--accent-main));
+      box-shadow: 0 0 10px var(--accent-glow);
       transform: rotate(180deg);
       transform-origin: center;
     }
     .origin-callout .callout-box {
-      background: rgba(16, 12, 14, 0.9);
-      border: 1.5px solid #ff7733;
+      background: rgba(16, 12, 18, 0.9);
+      border: 1.5px solid var(--accent-main);
       border-radius: 6px;
       padding: 6px 12px;
-      box-shadow: 0 0 18px rgba(255, 100, 30, 0.35);
+      box-shadow: 0 0 18px var(--accent-soft);
+      transition: border-color 0.4s ease, box-shadow 0.4s ease;
     }
     .origin-callout .callout-mini {
       display: block;
       font-size: 0.62rem;
       letter-spacing: 0.12em;
-      color: rgba(255, 195, 130, 0.75);
+      color: rgba(var(--accent-rgb), 0.82);
     }
     .origin-callout .callout-state {
       font-size: 0.95rem;
       font-weight: 700;
-      color: #ffbb66;
+      color: #ffffff;
+      text-shadow: 0 0 10px var(--accent-soft);
     }
 
     /* Blocco in alto a destra: Titolo canzone e info */
@@ -88,17 +103,18 @@
       width: 340px;
       z-index: 10;
       pointer-events: none;
-      background: rgba(120, 20, 25, 0.35);
-      border: 1px solid rgba(255, 110, 70, 0.35);
+      background: rgba(18, 16, 28, 0.55);
+      border: 1px solid rgba(var(--accent-rgb), 0.42);
       border-radius: 12px;
       padding: 12px 16px;
       backdrop-filter: blur(10px);
+      transition: border-color 0.4s ease;
     }
     .lyric-ghost {
       font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 0.14em;
-      color: rgba(255, 190, 140, 0.65);
+      color: rgba(var(--accent-rgb), 0.8);
       text-transform: uppercase;
       margin-bottom: 2px;
     }
@@ -109,7 +125,7 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: #ffffff;
-      text-shadow: 0 2px 14px rgba(0,0,0,0.85), 0 0 18px rgba(255,140,60,0.4);
+      text-shadow: 0 2px 14px rgba(0,0,0,0.85), 0 0 18px var(--accent-soft);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -117,7 +133,7 @@
     .lyric-sub {
       display: block;
       font-size: clamp(1rem, 1.6vw, 1.35rem);
-      color: rgba(255, 220, 185, 0.9);
+      color: rgba(245, 248, 255, 0.92);
       margin-top: 3px;
       white-space: nowrap;
       overflow: hidden;
@@ -134,24 +150,25 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      background: linear-gradient(135deg, rgba(22, 16, 18, 0.85), rgba(10, 11, 18, 0.75));
-      border: 1.5px solid rgba(255, 155, 60, 0.55);
+      background: linear-gradient(135deg, rgba(20, 18, 28, 0.88), rgba(10, 11, 18, 0.78));
+      border: 1.5px solid rgba(var(--accent-rgb), 0.6);
       border-radius: 14px;
       padding: 10px 16px;
       backdrop-filter: blur(12px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.65);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.65), 0 0 20px rgba(var(--accent-rgb), 0.15);
+      transition: border-color 0.4s ease, box-shadow 0.4s ease;
     }
     .hud-dial {
       position: relative; width: 58px; height: 58px; border-radius: 50%; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
-      background: radial-gradient(circle, #1a0b12 45%, #3a0d16 100%);
-      box-shadow: 0 0 16px rgba(255, 65, 30, 0.45);
+      background: radial-gradient(circle, #141726 45%, #241428 100%);
+      box-shadow: 0 0 16px var(--accent-soft);
     }
     .hud-dial svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
-    .hud-dial-core { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 1.5px solid rgba(255, 190, 90, 0.8); background: #0d1326; }
+    .hud-dial-core { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 1.5px solid var(--accent-main); background: #0d1326; }
     .hud-dial-core img { width: 100%; height: 100%; object-fit: cover; }
-    .hud-stats { font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; line-height: 1.5; color: rgba(240, 244, 255, 0.9); overflow: hidden; }
-    .hud-stats .tag { color: var(--amber-glow); font-weight: 700; margin-right: 6px; }
+    .hud-stats { font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; line-height: 1.5; color: rgba(240, 244, 255, 0.92); overflow: hidden; }
+    .hud-stats .tag { color: var(--accent-main); font-weight: 700; margin-right: 6px; }
 
     /* Pannello playlist al centro-destra */
     .spotify-panel {
@@ -162,7 +179,7 @@
       height: calc(100vh - 335px);
       min-height: 180px;
       background: var(--glass-bg);
-      border: 1.5px solid rgba(255, 110, 70, 0.45);
+      border: 1.5px solid rgba(var(--accent-rgb), 0.48);
       border-radius: 22px;
       backdrop-filter: blur(16px);
       z-index: 30;
@@ -170,16 +187,17 @@
       flex-direction: column;
       overflow: hidden;
       box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+      transition: border-color 0.4s ease;
     }
     .spotify-panel.open { display: flex; }
-    .spotify-header { padding: 12px 14px; background: rgba(255,100,30,0.18); font-weight: 700; font-size: 0.88rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;}
+    .spotify-header { padding: 12px 14px; background: rgba(var(--accent-rgb), 0.16); font-weight: 700; font-size: 0.88rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;}
     .spotify-list { overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 
     .playlist-item, .track-item {
       display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; background: rgba(255,255,255,0.03);
       cursor: pointer; transition: background 0.2s; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;
     }
-    .playlist-item:hover, .track-item:hover { background: rgba(255,170,68,0.2); }
+    .playlist-item:hover, .track-item:hover { background: rgba(var(--accent-rgb), 0.22); }
     .playlist-item img, .track-item img { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
     .back-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
 
@@ -194,24 +212,25 @@
       align-items: center;
       gap: 8px;
       padding: 7px 16px;
-      background: rgba(90, 94, 106, 0.42);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(24, 28, 42, 0.65);
+      border: 1px solid rgba(var(--accent-rgb), 0.26);
       border-radius: 12px;
       backdrop-filter: blur(16px);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75);
     }
     .tb-btn {
-      appearance: none; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.08);
+      appearance: none; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.08);
       color: #ffffff; font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; font-weight: 600;
       padding: 6px 11px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.18s ease;
     }
-    .tb-btn:hover { background: rgba(255, 170, 68, 0.25); border-color: rgba(255, 170, 68, 0.6); }
+    .tb-btn:hover { background: rgba(var(--accent-rgb), 0.25); border-color: var(--accent-main); }
     .tb-divider { width: 1px; height: 20px; background: rgba(255, 255, 255, 0.16); margin: 0 2px; }
-    .track-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: rgba(255, 255, 255, 0.85); max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .track-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: rgba(255, 255, 255, 0.88); max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   </style>
 </head>
 <body>
   <div id="viewport">
+    <canvas id="galaxy-canvas"></canvas>
     <div id="globe-container"></div>
     <canvas id="visualizer-canvas"></canvas>
 
@@ -254,7 +273,7 @@
       <div class="hud-dial">
         <svg viewBox="0 0 72 72">
           <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="4" />
-          <circle id="hud-ring" cx="36" cy="36" r="30" fill="none" stroke="#ff6622" stroke-width="4" stroke-dasharray="188.5" stroke-dashoffset="75" stroke-linecap="round" />
+          <circle id="hud-ring" cx="36" cy="36" r="30" fill="none" stroke="rgb(var(--accent-rgb))" stroke-width="4" stroke-dasharray="188.5" stroke-dashoffset="75" stroke-linecap="round" />
         </svg>
         <div class="hud-dial-core">
           <img id="hud-thumb" alt="Cover" />
@@ -296,7 +315,12 @@
     ].join(' ');
     const MAX_TRACKS = 500;
 
-   const COUNTRY_COORDS = {
+    const DEFAULT_ACCENT_RGB = [255, 170, 68];
+    const DEFAULT_SECONDARY_RGB = [255, 95, 20];
+    let dynamicAccentRgb = [...DEFAULT_ACCENT_RGB];
+    let dynamicSecondaryRgb = [...DEFAULT_SECONDARY_RGB];
+
+    const COUNTRY_COORDS = {
       'ITALIA': { lat: 41.9, lon: 12.5 },
       'USA': { lat: 39.8, lon: -98.5 },
       'UK': { lat: 54.0, lon: -2.0 },
@@ -318,7 +342,6 @@
     };
 
     const ARTIST_COUNTRY_MAP = {
-      // Italia
       'sfera ebbasta': 'ITALIA', 'lazza': 'ITALIA', 'geolier': 'ITALIA', 'thasup': 'ITALIA',
       'salmo': 'ITALIA', 'marracash': 'ITALIA', 'gue': 'ITALIA', 'guè': 'ITALIA',
       'baby gang': 'ITALIA', 'anna': 'ITALIA', 'tony boy': 'ITALIA', 'kid yugi': 'ITALIA',
@@ -329,8 +352,6 @@
       'mahmood': 'ITALIA', 'blanco': 'ITALIA', 'maneskin': 'ITALIA', 'måneskin': 'ITALIA',
       'olmo': 'ITALIA', 'simba la rue': 'ITALIA', 'ghali': 'ITALIA', 'rose villain': 'ITALIA',
       'tony effe': 'ITALIA', 'franco126': 'ITALIA', 'carl brave': 'ITALIA', 'pazzesco': 'ITALIA',
-
-      // USA
       'drake': 'USA', 'travis scott': 'USA', 'kendrick lamar': 'USA', '21 savage': 'USA',
       'post malone': 'USA', 'future': 'USA', 'metro boomin': 'USA', 'lil baby': 'USA',
       'gunna': 'USA', 'playboi carti': 'USA', 'kanye west': 'USA', 'ye': 'USA',
@@ -339,54 +360,30 @@
       'xxxtentacion': 'USA', 'polo g': 'USA', 'lil durk': 'USA', 'king von': 'USA',
       'billie eilish': 'USA', 'olivia rodrigo': 'USA', 'taylor swift': 'USA', 'the weeknd': 'CANADA',
       'marshmello': 'USA', 'khalid': 'USA', 'doja cat': 'USA', 'sza': 'USA',
-
-      // UK
       'central cee': 'UK', 'dave': 'UK', 'fred again..': 'UK', 'aj tracey': 'UK',
       'headie one': 'UK', 'stormzy': 'UK', 'skepta': 'UK', 'j hus': 'UK',
       'stefflon don': 'UK', 'little simz': 'UK', 'pinkpantheress': 'UK', 'dua lipa': 'UK',
       'harry styles': 'UK', 'gorillaz': 'UK', 'disclosure': 'UK', 'calvin harris': 'UK',
-
-      // Francia
       'ninho': 'FRANCIA', 'jul': 'FRANCIA', 'pnl': 'FRANCIA', 'damso': 'FRANCIA',
       'gazo': 'FRANCIA', 'tiakola': 'FRANCIA', 'hamza': 'FRANCIA',
       'booba': 'FRANCIA', 'kaaris': 'FRANCIA', 'aya nakamura': 'FRANCIA', 'dj snake': 'FRANCIA',
       'david guetta': 'FRANCIA', 'daft punk': 'FRANCIA', 'm83': 'FRANCIA',
-
-      // Spagna & America Latina
       'rosalia': 'SPAGNA', 'rosalía': 'SPAGNA', 'quevedo': 'SPAGNA', 'myke towers': 'PORTO RICO',
       'bad bunny': 'PORTO RICO', 'anuel aa': 'PORTO RICO', 'j balvin': 'SPAGNA', 'feid': 'SPAGNA',
       'peso pluma': 'MESSICO', 'bizarrap': 'ARGENTINA', 'duki': 'ARGENTINA', 'luísa sonza': 'BRASILE',
       'luisa sonza': 'BRASILE', 'anitta': 'BRASILE', 'ryan castro': 'SPAGNA',
-
-      // Germania, Svezia, Paesi Bassi, Svizzera
       'capital bra': 'GERMANIA', 'raf camora': 'GERMANIA', 'luciano': 'GERMANIA', 'apache 207': 'GERMANIA',
       'yung lean': 'SVEZIA', 'bladee': 'SVEZIA', 'swedish house mafia': 'SVEZIA', 'avicii': 'SVEZIA',
       'martin garrix': 'PAESI BASSI', 'tiësto': 'PAESI BASSI', 'tiesto': 'PAESI BASSI',
-
-      // Giappone & Corea del Sud
       'yoasobi': 'GIAPPONE', 'kenshi yonezu': 'GIAPPONE', 'lisa': 'GIAPPONE', 'fujii kaze': 'GIAPPONE',
       'bts': 'COREA DEL SUD', 'blackpink': 'COREA DEL SUD', 'stray kids': 'COREA DEL SUD', 'newjeans': 'COREA DEL SUD'
     };
 
     const MARKET_TO_COUNTRY = {
-      'IT': 'ITALIA',
-      'GB': 'UK',
-      'FR': 'FRANCIA',
-      'ES': 'SPAGNA',
-      'DE': 'GERMANIA',
-      'SE': 'SVEZIA',
-      'NL': 'PAESI BASSI',
-      'CH': 'SVIZZERA',
-      'PT': 'PORTOGALLO',
-      'BR': 'BRASILE',
-      'MX': 'MESSICO',
-      'AR': 'ARGENTINA',
-      'PR': 'PORTO RICO',
-      'CA': 'CANADA',
-      'JP': 'GIAPPONE',
-      'KR': 'COREA DEL SUD',
-      'AU': 'AUSTRALIA',
-      'US': 'USA'
+      'IT': 'ITALIA', 'GB': 'UK', 'FR': 'FRANCIA', 'ES': 'SPAGNA', 'DE': 'GERMANIA',
+      'SE': 'SVEZIA', 'NL': 'PAESI BASSI', 'CH': 'SVIZZERA', 'PT': 'PORTOGALLO',
+      'BR': 'BRASILE', 'MX': 'MESSICO', 'AR': 'ARGENTINA', 'PR': 'PORTO RICO',
+      'CA': 'CANADA', 'JP': 'GIAPPONE', 'KR': 'COREA DEL SUD', 'AU': 'AUSTRALIA', 'US': 'USA'
     };
 
     const originCache = new Map();
@@ -409,7 +406,6 @@
 
       const artists = Array.isArray(track.artists) ? track.artists : [];
 
-      // 1. Controlla tutti gli artisti del brano (principale + feat)
       for (const art of artists) {
         const cleanName = (art && art.name) ? art.name.toLowerCase().trim() : '';
         if (ARTIST_COUNTRY_MAP[cleanName]) {
@@ -419,7 +415,6 @@
         }
       }
 
-      // 2. Controlla alfabeti/scritture specifiche nel titolo o negli artisti
       const combinedText = `${track.name || ''} ${artists.map(a => a.name).join(' ')}`;
       const scriptCountry = detectByScriptOrText(combinedText);
       if (scriptCountry && COUNTRY_COORDS[scriptCountry]) {
@@ -427,7 +422,6 @@
         return { name: scriptCountry, coords: COUNTRY_COORDS[scriptCountry] };
       }
 
-      // 3. Controlla mercati limitati se presenti
       const markets = track.available_markets || (track.album && track.album.available_markets) || [];
       if (Array.isArray(markets) && markets.length > 0 && markets.length <= 15) {
         for (const code of markets) {
@@ -439,18 +433,97 @@
         }
       }
 
-      // 4. Fallback predefinito quando il brano non ha corrispondenze locali
       const fallback = 'USA';
       originCache.set(cacheKey, fallback);
       return { name: fallback, coords: COUNTRY_COORDS[fallback] };
     }
+
     function updateOriginLabel(name) {
       document.getElementById('stat-origin').textContent = name;
       document.getElementById('callout-country-name').textContent = name;
     }
 
+    // --- ESTRAZIONE COLORE DOMINANTE DALLA COPERTINA ---
+    const sampleCanvas = document.createElement('canvas');
+    sampleCanvas.width = 24;
+    sampleCanvas.height = 24;
+    const sampleCtx = sampleCanvas.getContext('2d', { willReadFrequently: true });
+
+    function applyThemeAccentColors(primaryRgb, secondaryRgb) {
+      dynamicAccentRgb = [...primaryRgb];
+      dynamicSecondaryRgb = [...secondaryRgb];
+
+      const root = document.documentElement.style;
+      root.setProperty('--accent-rgb', `${primaryRgb[0]}, ${primaryRgb[1]}, ${primaryRgb[2]}`);
+      root.setProperty('--accent-secondary-rgb', `${secondaryRgb[0]}, ${secondaryRgb[1]}, ${secondaryRgb[2]}`);
+
+      if (typeof atmoMat !== 'undefined') {
+        atmoMat.color.setRGB(primaryRgb[0] / 255, primaryRgb[1] / 255, primaryRgb[2] / 255);
+      }
+      if (typeof radarMat !== 'undefined') {
+        radarMat.color.setRGB(primaryRgb[0] / 255, primaryRgb[1] / 255, primaryRgb[2] / 255);
+      }
+      if (typeof arcMat !== 'undefined') {
+        arcMat.color.setRGB(primaryRgb[0] / 255, primaryRgb[1] / 255, primaryRgb[2] / 255);
+      }
+      if (typeof haloMat !== 'undefined') {
+        haloMat.color.setRGB(secondaryRgb[0] / 255, secondaryRgb[1] / 255, secondaryRgb[2] / 255);
+      }
+    }
+
+    function extractPaletteFromCover(img) {
+      try {
+        if (!img.complete || !img.naturalWidth || !img.getAttribute('src')) return;
+        sampleCtx.clearRect(0, 0, 24, 24);
+        sampleCtx.drawImage(img, 0, 0, 24, 24);
+        const data = sampleCtx.getImageData(0, 0, 24, 24).data;
+
+        let bestScore = -1;
+        let bestRgb = [...DEFAULT_ACCENT_RGB];
+        let secondRgb = [...DEFAULT_SECONDARY_RGB];
+
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const a = data[i + 3];
+          if (a < 128) continue;
+
+          const maxC = Math.max(r, g, b);
+          const minC = Math.min(r, g, b);
+          const sat = maxC === 0 ? 0 : (maxC - minC) / maxC;
+          const lum = (r + g + b) / 3;
+
+          if (lum < 35 || lum > 235) continue;
+          const score = sat * 1.8 + (lum / 255) * 0.4;
+
+          if (score > bestScore) {
+            bestScore = score;
+            secondRgb = [...bestRgb];
+            const boost = lum < 115 ? 1.25 : 1.05;
+            bestRgb = [
+              Math.min(255, Math.round(r * boost)),
+              Math.min(255, Math.round(g * boost)),
+              Math.min(255, Math.round(b * boost))
+            ];
+          }
+        }
+
+        if (bestScore > 0) {
+          applyThemeAccentColors(bestRgb, secondRgb);
+        }
+      } catch (_) {
+        applyThemeAccentColors(DEFAULT_ACCENT_RGB, DEFAULT_SECONDARY_RGB);
+      }
+    }
+
     const coverImage = new Image();
     coverImage.crossOrigin = 'anonymous';
+    coverImage.onload = () => {
+      if (activeToken && coverImage.getAttribute('src')) {
+        extractPaletteFromCover(coverImage);
+      }
+    };
 
     let activeToken = null;
     let pollInterval = null;
@@ -467,13 +540,33 @@
       beatPhase: 0,
       energy: 0.15,
       targetLat: 41.9,
-      targetLon: 12.5
+      targetLon: 12.5,
+      prevLat: 41.9,
+      prevLon: 12.5,
+      arcProgress: 0,
+      arcActive: false
     };
+
+    function setTargetOrigin(name, coords) {
+      const nextLat = coords.lat;
+      const nextLon = coords.lon;
+      const changed = Math.abs(nextLat - playbackState.targetLat) > 0.01 || Math.abs(nextLon - playbackState.targetLon) > 0.01;
+
+      if (changed) {
+        playbackState.prevLat = playbackState.targetLat;
+        playbackState.prevLon = playbackState.targetLon;
+        playbackState.targetLat = nextLat;
+        playbackState.targetLon = nextLon;
+        playbackState.arcProgress = 0;
+        playbackState.arcActive = true;
+        rebuildArcGeometry(playbackState.prevLat, playbackState.prevLon, playbackState.targetLat, playbackState.targetLon);
+      }
+      updateOriginLabel(name);
+    }
 
     function onClick(id, handler) {
       const el = document.getElementById(id);
       if (el) el.addEventListener('click', handler);
-      else console.warn(`Elemento #${id} non trovato nel DOM`);
     }
 
     window.onSpotifyWebPlaybackSDKReady = () => {
@@ -551,7 +644,6 @@
           window.history.replaceState({}, document.title, REDIRECT_URI);
           initSpotifySession(data.access_token);
         } else {
-          console.error('Errore scambio token:', data);
           document.getElementById('track-name').textContent = 'TOKEN NON VALIDO';
         }
       } catch (err) {
@@ -593,9 +685,7 @@
       playbackState.lastSyncAt = performance.now();
 
       const origin = detectOriginCountry(track);
-      playbackState.targetLat = origin.coords.lat;
-      playbackState.targetLon = origin.coords.lon;
-      updateOriginLabel(origin.name);
+      setTargetOrigin(origin.name, origin.coords);
 
       const artistName = (track.artists && track.artists[0]) ? track.artists[0].name : 'Artista sconosciuto';
       document.getElementById('track-name').textContent = `${artistName} - ${track.name}`;
@@ -610,6 +700,8 @@
           coverImage.crossOrigin = 'anonymous';
           coverImage.src = coverUrl;
           document.getElementById('hud-thumb').src = coverUrl;
+        } else {
+          extractPaletteFromCover(coverImage);
         }
       }
     }
@@ -648,16 +740,7 @@
         }
       });
 
-      spotifyPlayer.addListener('initialization_error', ({ message }) => {
-        console.error('SDK init error:', message);
-      });
-
-      spotifyPlayer.addListener('authentication_error', ({ message }) => {
-        console.error('SDK auth error:', message);
-      });
-
-      spotifyPlayer.addListener('account_error', ({ message }) => {
-        console.error('SDK account error (serve Premium per audio web):', message);
+      spotifyPlayer.addListener('account_error', () => {
         document.getElementById('track-name').textContent = 'AUDIO SDK: SERVE PREMIUM';
       });
 
@@ -750,7 +833,6 @@
     });
 
     function clearAllImages() {
-      coverImage.onload = null;
       coverImage.src = '';
       coverImage.removeAttribute('src');
 
@@ -784,8 +866,10 @@
       playbackState.energy = 0.05;
       playbackState.targetLat = 41.9;
       playbackState.targetLon = 12.5;
+      playbackState.arcActive = false;
 
       clearAllImages();
+      applyThemeAccentColors(DEFAULT_ACCENT_RGB, DEFAULT_SECONDARY_RGB);
 
       document.getElementById('spotify-panel').classList.remove('open');
       document.getElementById('spotify-list-container').innerHTML = '';
@@ -1006,7 +1090,6 @@
     const savedToken = localStorage.getItem('spotify_access_token');
 
     if (authError) {
-      console.error('Errore autorizzazione Spotify:', authError);
       document.getElementById('track-name').textContent = `ACCESSO NEGATO (${authError})`;
       window.history.replaceState({}, document.title, REDIRECT_URI);
     } else if (authCode) {
@@ -1021,6 +1104,62 @@
         String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
     }, 1000);
 
+    // --- SFONDO GALASSIA ---
+    const galaxyCanvas = document.getElementById('galaxy-canvas');
+    const galaxyCtx = galaxyCanvas ? galaxyCanvas.getContext('2d') : null;
+    let stars = [];
+
+    function initGalaxyStars(w, h) {
+      const count = Math.min(280, Math.floor((w * h) / 5500));
+      stars = Array.from({ length: count }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.65 + 0.35,
+        baseAlpha: Math.random() * 0.75 + 0.2,
+        twinkleSpeed: Math.random() * 2.4 + 0.6,
+        phase: Math.random() * Math.PI * 2,
+        driftX: (Math.random() - 0.5) * 6,
+        driftY: (Math.random() - 0.5) * 6,
+        warmTint: Math.random() > 0.65
+      }));
+    }
+
+    function drawGalaxy(t, dt, bassKick) {
+      if (!galaxyCtx || !galaxyCanvas) return;
+      galaxyCtx.clearRect(0, 0, width, height);
+
+      const [ar, ag, ab] = dynamicAccentRgb;
+      const bandGrad = galaxyCtx.createLinearGradient(0, height * 0.85, width, height * 0.15);
+      bandGrad.addColorStop(0, `rgba(${ar}, ${ag}, ${ab}, 0.035)`);
+      bandGrad.addColorStop(0.5, `rgba(165, 95, 255, ${0.05 + bassKick * 0.025})`);
+      bandGrad.addColorStop(1, `rgba(60, 160, 255, 0.025)`);
+      galaxyCtx.fillStyle = bandGrad;
+      galaxyCtx.fillRect(0, 0, width, height);
+
+      const sec = t * 0.001;
+      for (const s of stars) {
+        s.x += s.driftX * dt * (0.4 + playbackState.energy * 0.8);
+        s.y += s.driftY * dt * (0.4 + playbackState.energy * 0.8);
+
+        if (s.x < 0) s.x += width;
+        if (s.x > width) s.x -= width;
+        if (s.y < 0) s.y += height;
+        if (s.y > height) s.y -= height;
+
+        const twinkle = 0.65 + 0.35 * Math.sin(sec * s.twinkleSpeed + s.phase);
+        const alpha = Math.min(1, s.baseAlpha * twinkle + bassKick * 0.12 * playbackState.energy);
+        const radius = s.r * (1 + bassKick * 0.25 * playbackState.energy);
+
+        galaxyCtx.beginPath();
+        galaxyCtx.arc(s.x, s.y, radius, 0, Math.PI * 2);
+        galaxyCtx.fillStyle = s.warmTint
+          ? `rgba(${ar}, ${ag}, ${ab}, ${alpha})`
+          : `rgba(225, 235, 255, ${alpha})`;
+        galaxyCtx.fill();
+      }
+    }
+
+    // --- TEXTURE MAPPA MONDIALE ---
     function drawFallbackContinents(ctx, width, height) {
       function drawRegion(points, fill = '#ff922b', stroke = '#ffe699', lineWidth = 2.4) {
         ctx.beginPath();
@@ -1042,24 +1181,12 @@
 
       drawRegion([[71,-156],[70,-140],[69,-133],[70,-115],[68,-95],[63,-92],[58,-94],[52,-80],[55,-78],[60,-65],[52,-56],[47,-53],[45,-61],[43,-70],[40,-74],[35,-75],[30,-81],[25,-80],[25,-82],[30,-84],[29,-90],[26,-97],[21,-97],[19,-91],[21,-87],[18,-88],[15,-83],[9,-79],[8,-78],[14,-92],[17,-101],[23,-106],[31,-114],[23,-110],[28,-115],[33,-117],[38,-123],[45,-124],[49,-125],[55,-132],[60,-145],[61,-150],[55,-162],[60,-166],[66,-168]]);
       drawRegion([[83,-35],[81,-18],[76,-19],[70,-22],[65,-38],[60,-44],[65,-52],[72,-55],[77,-68],[81,-55]]);
-      drawRegion([[66.5,-24],[66.5,-14],[64.2,-14],[63.8,-22]]);
       drawRegion([[12,-72],[10,-62],[6,-53],[1,-50],[-2,-44],[-5,-35],[-10,-36],[-16,-39],[-23,-42],[-28,-48],[-34,-53],[-38,-57],[-42,-64],[-48,-66],[-54,-68],[-55,-71],[-50,-75],[-42,-74],[-33,-71],[-23,-70],[-18,-71],[-14,-76],[-5,-81],[1,-79],[7,-77],[10,-75]]);
       drawRegion([[71,26],[70,29],[66,24],[61,21],[60,29],[55,21],[54,14],[55,9],[57,10],[54,8],[52,4],[49,-2],[48,-5],[44,-2],[43,-9],[37,-9],[36,-5.5],[38,-0.5],[42,3],[43.3,5],[43.8,7.5],[44.4,8.9],[42.5,11],[41.2,13.5],[40.6,14.2],[38.2,15.6],[37.9,16.1],[40.2,18.4],[41.9,16.1],[43.6,13.5],[45.4,12.3],[45.6,13.8],[43.5,16.4],[40.5,19.5],[38,21.5],[36.5,22.5],[38,24],[40.5,23.5],[41,28.8],[44,28.6],[46.5,31],[45,35],[47,39],[52,38],[58,34],[64,36],[69,33]]);
       drawRegion([[46.5,10.5],[46.8,12.3],[45.6,13.8],[45.4,12.3],[43.6,13.5],[41.9,16.1],[41.2,16.5],[40.2,18.4],[39.8,18.1],[40.3,16.8],[39.0,17.1],[37.9,16.0],[38.2,15.6],[39.5,15.9],[40.6,14.3],[41.2,13.5],[42.0,11.8],[43.8,10.3],[44.4,8.9],[43.8,7.6],[45.2,7.1]], '#ffaa3b', '#fff0b3', 2.8);
-      drawRegion([[38.2,15.5],[37.8,12.4],[36.7,15.1]], '#ffaa3b', '#fff0b3', 2.4);
-      drawRegion([[41.2,9.3],[40.8,8.2],[39.0,8.4],[39.2,9.6]], '#ffaa3b', '#fff0b3', 2.4);
-      drawRegion([[71,26],[69,18],[64,11],[60,5],[58,7],[59,11],[56,13],[56,16],[60,18],[65,22],[67,25]]);
-      drawRegion([[58.6,-3.2],[57.5,-1.8],[55.8,-2.1],[53.0,0.3],[51.3,1.3],[50.7,-1.5],[50.1,-5.5],[51.8,-5.2],[53.4,-3.1],[54.8,-4.8],[56.5,-5.8]]);
-      drawRegion([[55.2,-7.5],[54.5,-5.6],[52.2,-6.4],[51.5,-9.8],[53.5,-10.1]]);
       drawRegion([[36,-5.5],[37,10],[33,11],[31,20],[31.5,32],[28,34],[20,38],[12,44],[11.5,51],[2,45],[-5,39],[-11,40.5],[-17,38],[-24,35],[-30,31],[-34,25],[-34.8,20],[-33,18],[-26,15],[-17,12],[-6,12],[4,9],[6,2],[5,-7],[11,-16],[15,-17],[21,-17],[28,-13],[33,-8]]);
-      drawRegion([[-12,49],[-16,50],[-25,47],[-25,44],[-17,44]]);
       drawRegion([[41,29],[42,41],[38,44],[30,48],[26,56],[22,59],[15,52],[13,44],[21,39],[29,35],[34,36],[36,36],[37,42],[40,50],[46,52],[55,60],[68,68],[73,82],[76,104],[72,130],[68,165],[65,178],[60,164],[52,158],[54,140],[45,135],[40,129],[35,129],[38,125],[40,120],[35,119],[31,122],[24,118],[21,110],[17,108],[10,104],[13,100],[7,103],[2,103],[6,99],[16,97],[22,91],[20,86],[13,80],[8,77.5],[15,74],[22,69],[25,66],[27,57]]);
-      drawRegion([[45,142],[42,141],[39,142],[35,140],[34,135],[33,131],[31,130],[35,133],[38,139],[41,140]]);
-      drawRegion([[18,121],[14,122],[10,125],[7,126],[6,122],[11,119],[15,120]]);
-      drawRegion([[-6,106],[-7,112],[-8,116],[-8,120],[-6,105]]);
-      drawRegion([[1,109],[5,116],[1,118],[-3,116],[-3,110]]);
       drawRegion([[-12,131],[-15,136],[-11,142],[-19,147],[-27,153],[-35,151],[-38,145],[-36,138],[-32,132],[-34,122],[-34,115],[-26,113],[-20,118],[-15,125]]);
-      drawRegion([[-35,174],[-38,178],[-41,175],[-46,168],[-44,169],[-41,173]]);
     }
 
     function paintMapBase(ctx, width, height) {
@@ -1124,7 +1251,6 @@
       tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
       tex.needsUpdate = true;
 
-      // Carica confini geografici dettagliati (110m/50m GeoJSON) e ridisegna la texture con coste reali
       fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
         .then(r => r.json())
         .then(async topo => {
@@ -1151,14 +1277,12 @@
           ctx.restore();
           tex.needsUpdate = true;
         })
-        .catch(() => {
-          // Mantiene la mappa locale se la CDN non è raggiungibile
-        });
+        .catch(() => {});
 
       return tex;
     }
 
-    // --- GLOBO 3D RIDOTTO LEGGERMENTE CON MARKER VISIBILE ---
+    // --- GLOBO 3D + RADAR SATELLITARE + ARCO 3D ---
     const globeContainer = document.getElementById('globe-container');
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -1180,7 +1304,7 @@
     dirLight.position.set(5, 3, 5);
     scene.add(dirLight);
 
-   const worldTexture = createWorldMapTexture();
+    const worldTexture = createWorldMapTexture();
     const earthGeo = new THREE.SphereGeometry(1.75, 96, 96);
     const earthMat = new THREE.MeshStandardMaterial({
       map: worldTexture,
@@ -1198,9 +1322,6 @@
       side: THREE.BackSide
     });
     globeGroup.add(new THREE.Mesh(atmoGeo, atmoMat));
-    
-    
-    
 
     const pinGeo = new THREE.SphereGeometry(0.045, 18, 18);
     const pinMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -1208,9 +1329,32 @@
     globeGroup.add(pinMesh);
 
     const haloGeo = new THREE.RingGeometry(0.062, 0.088, 24);
-    const haloMat = new THREE.MeshBasicMaterial({ color: 0x6e2c0a, side: THREE.DoubleSide });
+    const haloMat = new THREE.MeshBasicMaterial({ color: 0xff5f14, side: THREE.DoubleSide });
     const haloMesh = new THREE.Mesh(haloGeo, haloMat);
     globeGroup.add(haloMesh);
+
+    // Anelli radar satellitari espandibili attorno al pin
+    const radarMat = new THREE.MeshBasicMaterial({
+      color: 0xffaa44,
+      transparent: true,
+      opacity: 0.7,
+      side: THREE.DoubleSide
+    });
+    const radarRings = [0, 0.33, 0.66].map(offset => {
+      const mesh = new THREE.Mesh(new THREE.RingGeometry(0.08, 0.105, 32), radarMat.clone());
+      mesh.userData.phaseOffset = offset;
+      globeGroup.add(mesh);
+      return mesh;
+    });
+
+    // Arco 3D tra Stato precedente e nuovo Stato
+    const arcMat = new THREE.LineBasicMaterial({
+      color: 0xffaa44,
+      transparent: true,
+      opacity: 0.9
+    });
+    let arcLine = null;
+    let arcPoints = [];
 
     function latLonToVector3(lat, lon, radius) {
       const phi = (90 - lat) * (Math.PI / 180);
@@ -1220,6 +1364,35 @@
         radius * Math.cos(phi),
         radius * Math.sin(phi) * Math.sin(theta)
       );
+    }
+
+    function rebuildArcGeometry(lat1, lon1, lat2, lon2) {
+      if (arcLine) {
+        globeGroup.remove(arcLine);
+        arcLine.geometry.dispose();
+        arcLine = null;
+      }
+
+      const start = latLonToVector3(lat1, lon1, 1.78);
+      const end = latLonToVector3(lat2, lon2, 1.78);
+      const dist = start.distanceTo(end);
+      if (dist < 0.02) return;
+
+      const segments = 64;
+      const pts = [];
+      const lift = Math.min(0.65, 0.18 + dist * 0.28);
+
+      for (let i = 0; i <= segments; i++) {
+        const t = i / segments;
+        const interp = new THREE.Vector3().lerpVectors(start, end, t).normalize();
+        const heightOffset = 1.78 + Math.sin(t * Math.PI) * lift;
+        pts.push(interp.multiplyScalar(heightOffset));
+      }
+
+      arcPoints = pts;
+      const geo = new THREE.BufferGeometry().setFromPoints(pts.slice(0, 2));
+      arcLine = new THREE.Line(geo, arcMat);
+      globeGroup.add(arcLine);
     }
 
     // --- VISUALIZZATORE TONDO CENTRALE ---
@@ -1234,6 +1407,11 @@
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
       visCanvas.width = width; visCanvas.height = height;
+      if (galaxyCanvas) {
+        galaxyCanvas.width = width;
+        galaxyCanvas.height = height;
+        initGalaxyStars(width, height);
+      }
     }
     window.addEventListener('resize', resize);
     resize();
@@ -1261,24 +1439,48 @@
         ? Math.pow(Math.max(0, Math.sin(playbackState.beatPhase)), 3)
         : 0.15;
 
+      drawGalaxy(t, dt, bassKick);
+
       const desiredRotY = -((playbackState.targetLon + 90) * (Math.PI / 180));
       const desiredRotX = (playbackState.targetLat * (Math.PI / 180)) * 0.65;
       globeGroup.rotation.y += (desiredRotY - globeGroup.rotation.y) * Math.min(1, dt * 2.5);
       globeGroup.rotation.x += (desiredRotX - globeGroup.rotation.x) * Math.min(1, dt * 2.5);
 
       const pinPos = latLonToVector3(playbackState.targetLat, playbackState.targetLon, 1.78);
+      const pinNormal = pinPos.clone().normalize();
       pinMesh.position.copy(pinPos);
-      haloMesh.position.copy(pinPos.clone().normalize().multiplyScalar(1.79));
+      haloMesh.position.copy(pinNormal.clone().multiplyScalar(1.785));
       haloMesh.lookAt(camera.position);
 
       const pinScale = 1 + bassKick * 0.65 * playbackState.energy;
       pinMesh.scale.set(pinScale, pinScale, pinScale);
       haloMesh.scale.set(pinScale, pinScale, pinScale);
 
+      // Aggiorna onde radar satellitari attorno al pin
+      const radarSpeed = playbackState.isPlaying ? (0.65 + bassKick * 0.45) : 0.22;
+      radarRings.forEach(ring => {
+        const cycle = ((t * 0.001 * radarSpeed) + ring.userData.phaseOffset) % 1;
+        const scale = 1 + cycle * 4.2;
+        ring.position.copy(pinNormal.clone().multiplyScalar(1.786));
+        ring.lookAt(camera.position);
+        ring.scale.set(scale, scale, 1);
+        ring.material.opacity = (1 - cycle) * (0.35 + 0.45 * playbackState.energy);
+      });
+
+      // Aggiorna animazione arco 3D tra Stati
+      if (playbackState.arcActive && arcLine && arcPoints.length > 1) {
+        playbackState.arcProgress = Math.min(1, playbackState.arcProgress + dt * 1.15);
+        const visibleCount = Math.max(2, Math.floor(arcPoints.length * playbackState.arcProgress));
+        arcLine.geometry.dispose();
+        arcLine.geometry = new THREE.BufferGeometry().setFromPoints(arcPoints.slice(0, visibleCount));
+        arcMat.opacity = playbackState.arcProgress < 0.98 ? 0.92 : Math.max(0.18, arcMat.opacity - dt * 0.25);
+      }
+
       renderer.render(scene, camera);
 
       visCtx.clearRect(0, 0, width, height);
 
+      const [ar, ag, ab] = dynamicAccentRgb;
       const cx = width * 0.52, cy = height * 0.5;
       const pulse = bassKick * 9 * playbackState.energy;
       const r = Math.min(width, height) * 0.145 + pulse;
@@ -1290,7 +1492,7 @@
         const lowFreqBoost = 0.65 + 0.35 * Math.cos(i * 0.2);
         const barH = 4 + (harmonic * 26 * lowFreqBoost + bassKick * 18) * playbackState.energy;
 
-        visCtx.strokeStyle = `rgba(255, 210, 140, ${0.35 + 0.55 * playbackState.energy})`;
+        visCtx.strokeStyle = `rgba(${ar}, ${ag}, ${ab}, ${0.35 + 0.55 * playbackState.energy})`;
         visCtx.lineWidth = 3;
         visCtx.lineCap = 'round';
         visCtx.beginPath();
@@ -1315,7 +1517,7 @@
       }
       visCtx.restore();
 
-      visCtx.strokeStyle = '#ffbb66';
+      visCtx.strokeStyle = `rgb(${ar}, ${ag}, ${ab})`;
       visCtx.lineWidth = 2.5;
       visCtx.beginPath();
       visCtx.arc(cx, cy, r, 0, Math.PI * 2);
