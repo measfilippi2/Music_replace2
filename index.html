@@ -339,51 +339,399 @@
       'GIAPPONE': { lat: 36.2, lon: 138.2 },
       'COREA DEL SUD': { lat: 35.9, lon: 127.7 },
       'AUSTRALIA': { lat: -25.3, lon: 133.8 }
+      'RUSSIA': { lat: 55.7558, lon: 37.6173 },
     };
 
     const ARTIST_COUNTRY_MAP = {
+      // Italia 
       'sfera ebbasta': 'ITALIA', 'lazza': 'ITALIA', 'geolier': 'ITALIA', 'thasup': 'ITALIA',
       'salmo': 'ITALIA', 'marracash': 'ITALIA', 'gue': 'ITALIA', 'guè': 'ITALIA',
-      'baby gang': 'ITALIA', 'anna': 'ITALIA', 'tony boy': 'ITALIA', 'kid yugi': 'ITALIA',
-      'artie 5ive': 'ITALIA', 'rondo': 'ITALIA', 'rhove': 'ITALIA', 'shiva': 'ITALIA',
-      'pak': 'ITALIA', 'niky savage': 'ITALIA', 'diss g': 'ITALIA', 'capo plaza': 'ITALIA',
-      'tedua': 'ITALIA', 'izi': 'ITALIA', 'ernia': 'ITALIA', 'rkomi': 'ITALIA',
-      'fabri fibra': 'ITALIA', 'noyz narcos': 'ITALIA', 'gemitaiz': 'ITALIA', 'madman': 'ITALIA',
-      'mahmood': 'ITALIA', 'blanco': 'ITALIA', 'maneskin': 'ITALIA', 'måneskin': 'ITALIA',
-      'olmo': 'ITALIA', 'simba la rue': 'ITALIA', 'ghali': 'ITALIA', 'rose villain': 'ITALIA',
-      'tony effe': 'ITALIA', 'franco126': 'ITALIA', 'carl brave': 'ITALIA', 'pazzesco': 'ITALIA',
+      'baby gang': 'ITALIA', 'anna': 'ITALIA', 'anna pepe': 'ITALIA', 'anna (anna pepe)': 'ITALIA',
+      'tony boy': 'ITALIA', 'kid yugi': 'ITALIA', 'artie 5ive': 'ITALIA', 'rondo': 'ITALIA',
+      'rhove': 'ITALIA', 'shiva': 'ITALIA', 'pak': 'ITALIA', 'niky savage': 'ITALIA',
+      'diss g': 'ITALIA', 'capo plaza': 'ITALIA', 'tedua': 'ITALIA', 'izi': 'ITALIA',
+      'ernia': 'ITALIA', 'rkomi': 'ITALIA', 'fabri fibra': 'ITALIA', 'noyz narcos': 'ITALIA',
+      'gemitaiz': 'ITALIA', 'madman': 'ITALIA', 'mahmood': 'ITALIA', 'blanco': 'ITALIA',
+      'maneskin': 'ITALIA', 'måneskin': 'ITALIA', 'olmo': 'ITALIA', 'simba la rue': 'ITALIA',
+      'ghali': 'ITALIA', 'rose villain': 'ITALIA', 'tony effe': 'ITALIA', 'franco126': 'ITALIA',
+      'carl brave': 'ITALIA', 'pazzesco': 'ITALIA', 'fabrizio de andré': 'ITALIA',
+      'lucio battisti': 'ITALIA', 'lucio dalla': 'ITALIA', 'franco battiato': 'ITALIA',
+      'pino daniele': 'ITALIA', 'giorgio gaber': 'ITALIA', 'enzo jannacci': 'ITALIA',
+      'rino gaetano': 'ITALIA', 'luigi tenco': 'ITALIA', 'gino paoli': 'ITALIA',
+      'francesco guccini': 'ITALIA', 'sergio endrigo': 'ITALIA', 'piero ciampi': 'ITALIA',
+      'franco califano': 'ITALIA', 'antonello venditti': 'ITALIA', 'claudio baglioni': 'ITALIA',
+      'renato zero': 'ITALIA', 'vasco rossi': 'ITALIA', 'luciano ligabue': 'ITALIA',
+      'jovanotti': 'ITALIA', 'biagio antonacci': 'ITALIA', 'tiziano ferro': 'ITALIA',
+      'marco mengoni': 'ITALIA', 'cesare cremonini': 'ITALIA', 'max pezzali': 'ITALIA',
+      'mina': 'ITALIA', 'ornella vanoni': 'ITALIA', 'mia martini': 'ITALIA',
+      'loredana bertè': 'ITALIA', 'gianna nannini': 'ITALIA', 'fiorella mannoia': 'ITALIA',
+      'laura pausini': 'ITALIA', 'giorgia': 'ITALIA', 'elisa': 'ITALIA',
+      'alessandra amoroso': 'ITALIA', 'noemi': 'ITALIA', 'arisa': 'ITALIA',
+      'malika ayane': 'ITALIA', 'irene grandi': 'ITALIA', 'raffaella carrà': 'ITALIA',
+      'domenico modugno': 'ITALIA', 'adriano celentano': 'ITALIA', 'gianni morandi': 'ITALIA',
+      'eros ramazzotti': 'ITALIA', 'zucchero fornaciari': 'ITALIA', 'massimo ranieri': 'ITALIA',
+      'al bano': 'ITALIA', 'riccardo cocciante': 'ITALIA', 'umberto tozzi': 'ITALIA',
+      "gigi d'alessio": 'ITALIA', 'mario biondi': 'ITALIA', 'achille lauro': 'ITALIA',
+      'diodato': 'ITALIA', 'ultimo': 'ITALIA', 'enrico caruso': 'ITALIA',
+      'luciano pavarotti': 'ITALIA', 'andrea bocelli': 'ITALIA', 'il volo': 'ITALIA',
+      'j-ax': 'ITALIA', 'baby k': 'ITALIA', 'pinguini tattici nucleari': 'ITALIA',
+      'negramaro': 'ITALIA', 'pooh': 'ITALIA', 'negrita': 'ITALIA',
+      'elio e le storie tese': 'ITALIA', 'subsonica': 'ITALIA', 'afterhours': 'ITALIA',
+      'verdena': 'ITALIA', 'litfiba': 'ITALIA', '883': 'ITALIA',
+      'calcutta': 'ITALIA', 'coez': 'ITALIA', 'gazzelle': 'ITALIA',
+      'vasco brondi': 'ITALIA', 'irama': 'ITALIA', 'alfa': 'ITALIA',
+      'olly': 'ITALIA', 'bresh': 'ITALIA', 'elodie': 'ITALIA',
+      'annalisa': 'ITALIA', 'madame': 'ITALIA', 'angelina mango': 'ITALIA',
+      'gaia': 'ITALIA', 'ariete': 'ITALIA', 'clara': 'ITALIA',
+      'ditonellapiaga': 'ITALIA',
+
+     // USA 
       'drake': 'USA', 'travis scott': 'USA', 'kendrick lamar': 'USA', '21 savage': 'USA',
       'post malone': 'USA', 'future': 'USA', 'metro boomin': 'USA', 'lil baby': 'USA',
       'gunna': 'USA', 'playboi carti': 'USA', 'kanye west': 'USA', 'ye': 'USA',
       'eminem': 'USA', 'j. cole': 'USA', 'asap rocky': 'USA', 'a$ap rocky': 'USA',
       'tyler, the creator': 'USA', 'don toliver': 'USA', 'lil uzi vert': 'USA', 'juice wrld': 'USA',
       'xxxtentacion': 'USA', 'polo g': 'USA', 'lil durk': 'USA', 'king von': 'USA',
-      'billie eilish': 'USA', 'olivia rodrigo': 'USA', 'taylor swift': 'USA', 'the weeknd': 'CANADA',
+      'billie eilish': 'USA', 'olivia rodrigo': 'USA', 'taylor swift': 'USA',
       'marshmello': 'USA', 'khalid': 'USA', 'doja cat': 'USA', 'sza': 'USA',
+      'robert johnson': 'USA', 'b.b. king': 'USA', 'muddy waters': 'USA',
+      "howlin' wolf": 'USA', 'etta james': 'USA', 'sister rosetta tharpe': 'USA',
+      'louis armstrong': 'USA', 'duke ellington': 'USA', 'miles davis': 'USA',
+      'john coltrane': 'USA', 'charlie parker': 'USA', 'billie holiday': 'USA',
+      'ella fitzgerald': 'USA', 'nina simone': 'USA', 'woody guthrie': 'USA',
+      'bob dylan': 'USA', 'johnny cash': 'USA', 'dolly parton': 'USA',
+      'hank williams': 'USA', 'willie nelson': 'USA', 'garth brooks': 'USA',
+      'george strait': 'USA', 'kris kristofferson': 'USA', 'kacey musgraves': 'USA',
+      'elvis presley': 'USA', 'chuck berry': 'USA', 'little richard': 'USA',
+      'buddy holly': 'USA', 'the beach boys': 'USA', 'jimi hendrix': 'USA',
+      'the doors': 'USA', 'creedence clearwater revival': 'USA', 'eagles': 'USA',
+      'bruce springsteen': 'USA', 'tom petty': 'USA', 'billy joel': 'USA',
+      'fleetwood mac': 'USA', 'aerosmith': 'USA', 'ramones': 'USA',
+      'patti smith': 'USA', 'talking heads': 'USA', 'nirvana': 'USA',
+      'pearl jam': 'USA', 'soundgarden': 'USA', 'metallica': 'USA',
+      "guns n' roses": 'USA', 'van halen': 'USA', 'system of a down': 'USA',
+      'linkin park': 'USA', 'green day': 'USA', 'red hot chili peppers': 'USA',
+      'r.e.m.': 'USA', 'pixies': 'USA', 'sonic youth': 'USA',
+      'the strokes': 'USA', 'the white stripes': 'USA', 'foo fighters': 'USA',
+      'paramore': 'USA', 'phoebe bridgers': 'USA', 'aretha franklin': 'USA',
+      'stevie wonder': 'USA', 'ray charles': 'USA', 'marvin gaye': 'USA',
+      'james brown': 'USA', 'otis redding': 'USA', 'al green': 'USA',
+      'parliament-funkadelic': 'USA', 'the supremes': 'USA', 'frank sinatra': 'USA',
+      'barbra streisand': 'USA', 'michael jackson': 'USA', 'prince': 'USA',
+      'madonna': 'USA', 'whitney houston': 'USA', 'mariah carey': 'USA',
+      'janet jackson': 'USA', 'usher': 'USA', 'alicia keys': 'USA',
+      'beyoncé': 'USA', 'beyonce': 'USA', 'lady gaga': 'USA',
+      'britney spears': 'USA', 'ariana grande': 'USA', 'bruno mars': 'USA',
+      'lana del rey': 'USA', 'grandmaster flash': 'USA', 'run-d.m.c.': 'USA',
+      'public enemy': 'USA', 'rakim': 'USA', '2pac': 'USA',
+      'the notorious b.i.g.': 'USA', 'nas': 'USA', 'jay-z': 'USA',
+      'dr. dre': 'USA', 'snoop dogg': 'USA', 'outkast': 'USA',
+      'lil wayne': 'USA', 'nicki minaj': 'USA', 'donna summer': 'USA',
+      'giorgio moroder': 'USA', 'juan atkins': 'USA', 'derrick may': 'USA',
+      'kevin saunderson': 'USA', 'frankie knuckles': 'USA', 'skrillex': 'USA',
+      'diplo': 'USA',
+
+     // CANADA
+      'the weeknd': 'CANADA', 'leonard cohen': 'CANADA', 'joni mitchell': 'CANADA',
+      'neil young': 'CANADA', 'gordon lightfoot': 'CANADA', 'bruce cockburn': 'CANADA',
+      'stan rogers': 'CANADA', "stompin' tom connors": 'CANADA', 'shania twain': 'CANADA',
+      'anne murray': 'CANADA', 'k.d. lang': 'CANADA', 'blue rodeo': 'CANADA',
+      'corb lund': 'CANADA', 'terri clark': 'CANADA', 'dean brody': 'CANADA',
+      'tenille townes': 'CANADA', 'sarah mclachlan': 'CANADA', 'feist': 'CANADA',
+      'city and colour': 'CANADA', 'dallas green': 'CANADA', 'andy shauf': 'CANADA',
+      'rufus wainwright': 'CANADA', 'martha wainwright': 'CANADA', 'the band': 'CANADA',
+      'rush': 'CANADA', 'the guess who': 'CANADA', 'bachman-turner overdrive': 'CANADA',
+      'the tragically hip': 'CANADA', 'bryan adams': 'CANADA', 'loverboy': 'CANADA',
+      'nickelback': 'CANADA', 'three days grace': 'CANADA', 'billy talent': 'CANADA',
+      'sum 41': 'CANADA', 'simple plan': 'CANADA', 'alexisonfire': 'CANADA',
+      'pup': 'CANADA', 'fucked up': 'CANADA', 'cursed': 'CANADA',
+      'devin townsend': 'CANADA', 'strapping young lad': 'CANADA', 'devin townsend project': 'CANADA',
+      'annihilator': 'CANADA', 'voivod': 'CANADA', 'kataklysm': 'CANADA',
+      'céline dion': 'CANADA', 'celine dion': 'CANADA', 'alanis morissette': 'CANADA',
+      'avril lavigne': 'CANADA', 'justin bieber': 'CANADA', 'shawn mendes': 'CANADA',
+      'michael bublé': 'CANADA', 'michael buble': 'CANADA', 'nelly furtado': 'CANADA',
+      'carly rae jepsen': 'CANADA', 'tate mcrae': 'CANADA', 'alessia cara': 'CANADA',
+      'nav': 'CANADA', 'belly': 'CANADA', 'kardinal offishall': 'CANADA',
+      'k-os': 'CANADA', 'shad': 'CANADA', 'classified': 'CANADA',
+      'buck 65': 'CANADA', 'daniel caesar': 'CANADA', 'partynextdoor': 'CANADA',
+      'jessie reyez': 'CANADA', 'dvsn': 'CANADA', 'deborah cox': 'CANADA',
+      'melanie fiona': 'CANADA', 'arcade fire': 'CANADA', 'mac demarco': 'CANADA',
+      'broken social scene': 'CANADA', 'metric': 'CANADA', 'men i trust': 'CANADA',
+      'tegan and sara': 'CANADA', 'alvvays': 'CANADA', 'wolf parade': 'CANADA',
+      'destroyer': 'CANADA', 'dan bejar': 'CANADA', 'the new pornographers': 'CANADA',
+      'cowboy junkies': 'CANADA', 'barenaked ladies': 'CANADA', 'deadmau5': 'CANADA',
+      'kaytranada': 'CANADA', 'grimes': 'CANADA', 'caribou': 'CANADA',
+      'rezz': 'CANADA', 'purity ring': 'CANADA', 'chromeo': 'CANADA',
+      'crystal castles': 'CANADA', 'oscar peterson': 'CANADA', 'diana krall': 'CANADA',
+      'maynard ferguson': 'CANADA', 'jeff healey': 'CANADA', 'nikki yanofsky': 'CANADA',
+      'molly johnson': 'CANADA', 'holly cole': 'CANADA', 'the halluci nation': 'CANADA',
+      'a tribe called red': 'CANADA', 'tanya tagaq': 'CANADA', 'jeremy dutcher': 'CANADA',
+      'snotty nose rez kids': 'CANADA', 'elisapie': 'CANADA', 'aysanabee': 'CANADA',
+      'william prince': 'CANADA', 'crystal shawanda': 'CANADA',
+
+     // UK 
       'central cee': 'UK', 'dave': 'UK', 'fred again..': 'UK', 'aj tracey': 'UK',
       'headie one': 'UK', 'stormzy': 'UK', 'skepta': 'UK', 'j hus': 'UK',
       'stefflon don': 'UK', 'little simz': 'UK', 'pinkpantheress': 'UK', 'dua lipa': 'UK',
       'harry styles': 'UK', 'gorillaz': 'UK', 'disclosure': 'UK', 'calvin harris': 'UK',
+      'the beatles': 'UK', 'the rolling stones': 'UK', 'the who': 'UK',
+      'the kinks': 'UK', 'cream': 'UK', 'led zeppelin': 'UK',
+      'deep purple': 'UK', 'queen': 'UK', 'dire straits': 'UK',
+      'eric clapton': 'UK', 'rod stewart': 'UK', 'jeff beck': 'UK',
+      'joe cocker': 'UK', 'pink floyd': 'UK', 'david bowie': 'UK',
+      'genesis': 'UK', 'yes': 'UK', 'king crimson': 'UK',
+      'jethro tull': 'UK', 'roxy music': 'UK', 't. rex': 'UK',
+      'peter gabriel': 'UK', 'sex pistols': 'UK', 'the clash': 'UK',
+      'joy division': 'UK', 'new order': 'UK', 'the cure': 'UK',
+      'siouxsie and the banshees': 'UK', 'the fall': 'UK', 'gang of four': 'UK',
+      'depeche mode': 'UK', 'duran duran': 'UK', 'pet shop boys': 'UK',
+      'eurythmics': 'UK', 'the police': 'UK', 'talk talk': 'UK',
+      'tears for fears': 'UK', 'spandau ballet': 'UK', 'culture club': 'UK',
+      'black sabbath': 'UK', 'judas priest': 'UK', 'iron maiden': 'UK',
+      'motörhead': 'UK', 'motorhead': 'UK', 'def leppard': 'UK',
+      'oasis': 'UK', 'blur': 'UK', 'pulp': 'UK',
+      'suede': 'UK', 'the verve': 'UK', 'radiohead': 'UK',
+      'portishead': 'UK', 'massive attack': 'UK', 'björk': 'UK',
+      'bjork': 'UK', 'arctic monkeys': 'UK', 'muse': 'UK',
+      'coldplay': 'UK', 'florence + the machine': 'UK', 'the 1975': 'UK',
+      'glass animals': 'UK', 'wet leg': 'UK', "fontaines d.c.": 'UK',
+      'sam fender': 'UK', 'yungblud': 'UK', 'elton john': 'UK',
+      'george michael': 'UK', 'phil collins': 'UK', 'adele': 'UK',
+      'ed sheeran': 'UK', 'sam smith': 'UK', 'robbie williams': 'UK',
+      'jessie j': 'UK', 'ellie goulding': 'UK', 'charli xcx': 'UK',
+      'raye': 'UK', 'lola young': 'UK', 'amy winehouse': 'UK',
+      'sade': 'UK', 'dusty springfield': 'UK', 'tom jones': 'UK',
+      'jamiroquai': 'UK', 'craig david': 'UK', 'corinne bailey rae': 'UK',
+      'cleo sol': 'UK', 'jorja smith': 'UK', 'dizzee rascal': 'UK',
+      'aitch': 'UK', 'slowthai': 'UK', 'the prodigy': 'UK',
+      'aphex twin': 'UK', 'fatboy slim': 'UK', 'chemical brothers': 'UK',
+      'goldie': 'UK', 'roni size': 'UK',
+      
+      // FRANCIA 
       'ninho': 'FRANCIA', 'jul': 'FRANCIA', 'pnl': 'FRANCIA', 'damso': 'FRANCIA',
       'gazo': 'FRANCIA', 'tiakola': 'FRANCIA', 'hamza': 'FRANCIA',
       'booba': 'FRANCIA', 'kaaris': 'FRANCIA', 'aya nakamura': 'FRANCIA', 'dj snake': 'FRANCIA',
       'david guetta': 'FRANCIA', 'daft punk': 'FRANCIA', 'm83': 'FRANCIA',
-      'rosalia': 'SPAGNA', 'rosalía': 'SPAGNA', 'quevedo': 'SPAGNA', 'myke towers': 'PORTO RICO',
-      'bad bunny': 'PORTO RICO', 'anuel aa': 'PORTO RICO', 'j balvin': 'SPAGNA', 'feid': 'SPAGNA',
-      'peso pluma': 'MESSICO', 'bizarrap': 'ARGENTINA', 'duki': 'ARGENTINA', 'luísa sonza': 'BRASILE',
-      'luisa sonza': 'BRASILE', 'anitta': 'BRASILE', 'ryan castro': 'SPAGNA',
-      'capital bra': 'GERMANIA', 'raf camora': 'GERMANIA', 'luciano': 'GERMANIA', 'apache 207': 'GERMANIA',
-      'yung lean': 'SVEZIA', 'bladee': 'SVEZIA', 'swedish house mafia': 'SVEZIA', 'avicii': 'SVEZIA',
-      'martin garrix': 'PAESI BASSI', 'tiësto': 'PAESI BASSI', 'tiesto': 'PAESI BASSI',
-      'yoasobi': 'GIAPPONE', 'kenshi yonezu': 'GIAPPONE', 'lisa': 'GIAPPONE', 'fujii kaze': 'GIAPPONE',
-      'bts': 'COREA DEL SUD', 'blackpink': 'COREA DEL SUD', 'stray kids': 'COREA DEL SUD', 'newjeans': 'COREA DEL SUD'
+      'édith piaf': 'FRANCIA', 'edith piaf': 'FRANCIA', 'jacques brel': 'FRANCIA',
+      'georges brassens': 'FRANCIA', 'léo ferré': 'FRANCIA', 'leo ferre': 'FRANCIA',
+      'serge gainsbourg': 'FRANCIA', 'charles aznavour': 'FRANCIA', 'yves montand': 'FRANCIA',
+      'gilbert bécaud': 'FRANCIA', 'gilbert becaud': 'FRANCIA', 'michel berger': 'FRANCIA',
+      'jean-jacques goldman': 'FRANCIA', 'dalida': 'FRANCIA', 'françoise hardy': 'FRANCIA',
+      'francoise hardy': 'FRANCIA', 'france gall': 'FRANCIA', 'johnny hallyday': 'FRANCIA',
+      'sylvie vartan': 'FRANCIA', 'joe dassin': 'FRANCIA', 'mylène farmer': 'FRANCIA',
+      'mylene farmer': 'FRANCIA', 'alain bashung': 'FRANCIA', 'étienne daho': 'FRANCIA',
+      'etienne daho': 'FRANCIA', 'vanessa paradis': 'FRANCIA', 'zaho de sagazan': 'FRANCIA',
+      'jean-michel jarre': 'FRANCIA', 'air': 'FRANCIA', 'justice': 'FRANCIA',
+      'cassius': 'FRANCIA', 'laurent garnier': 'FRANCIA', 'bob sinclar': 'FRANCIA',
+      'martin solveig': 'FRANCIA', 'kavinsky': 'FRANCIA', 'madeon': 'FRANCIA',
+      'gesaffelstein': 'FRANCIA', 'fkj': 'FRANCIA', 'french kiwi juice': 'FRANCIA',
+      'polo & pan': 'FRANCIA', 'rone': 'FRANCIA', 'sébastien tellier': 'FRANCIA',
+      'sebastien tellier': 'FRANCIA', 'christine and the queens': 'FRANCIA', 'redcar': 'FRANCIA',
+      'iam': 'FRANCIA', 'ntm': 'FRANCIA', 'suprême ntm': 'FRANCIA',
+      'supreme ntm': 'FRANCIA', 'mc solaar': 'FRANCIA', 'oxmo puccino': 'FRANCIA',
+      'rohff': 'FRANCIA', 'kery james': 'FRANCIA', 'sefyu': 'FRANCIA',
+      'médine': 'FRANCIA', 'medine': 'FRANCIA', 'niska': 'FRANCIA',
+      'lomepal': 'FRANCIA', 'orelsan': 'FRANCIA', 'nekfeu': 'FRANCIA',
+      'laylow': 'FRANCIA', 'plk': 'FRANCIA', 'sch': 'FRANCIA',
+      'freeze corleone': 'FRANCIA', 'dadju': 'FRANCIA', 'tayc': 'FRANCIA',
+      'soolking': 'FRANCIA', 'maître gims': 'FRANCIA', 'maitre gims': 'FRANCIA',
+      'gims': 'FRANCIA', 'vitaa': 'FRANCIA', 'camélia jordana': 'FRANCIA',
+      'camelia jordana': 'FRANCIA', 'ronisia': 'FRANCIA', 'zaz': 'FRANCIA',
+      'stromae': 'FRANCIA', 'indila': 'FRANCIA', 'pomme': 'FRANCIA',
+      'clara luciani': 'FRANCIA', 'juliette armanet': 'FRANCIA', 'angèle': 'FRANCIA',
+      'angele': 'FRANCIA', 'louane': 'FRANCIA', 'vianney': 'FRANCIA',
+      'benjamin biolay': 'FRANCIA', 'yelle': 'FRANCIA', 'phoenix': 'FRANCIA',
+      'caravan palace': 'FRANCIA', "l'impératrice": 'FRANCIA', "l'imperatrice": 'FRANCIA',
+      'gojira': 'FRANCIA', 'alcest': 'FRANCIA', 'noir désir': 'FRANCIA',
+      'noir desir': 'FRANCIA', 'louise attaque': 'FRANCIA', 'téléphone': 'FRANCIA',
+      'telephone': 'FRANCIA', '-m-': 'FRANCIA', 'matthieu chedid': 'FRANCIA',
+
+    // SPAGNA 
+      'rosalia': 'SPAGNA', 'rosalía': 'SPAGNA', 'quevedo': 'SPAGNA',
+      'j balvin': 'SPAGNA', 'feid': 'SPAGNA', 'ryan castro': 'SPAGNA',
+      'camarón de la isla': 'SPAGNA', 'camaron de la isla': 'SPAGNA',
+      'paco de lucía': 'SPAGNA', 'paco de lucia': 'SPAGNA',
+      'enrique morente': 'SPAGNA', 'carmen linares': 'SPAGNA',
+      'diego el cigala': 'SPAGNA', 'estrella morente': 'SPAGNA', 'tomatito': 'SPAGNA',
+      'joan manuel serrat': 'SPAGNA', 'joaquín sabina': 'SPAGNA', 'joaquin sabina': 'SPAGNA',
+      'luis eduardo aute': 'SPAGNA', 'pablo milanés': 'SPAGNA', 'pablo milanes': 'SPAGNA',
+      'ismael serrano': 'SPAGNA', 'jorge drexler': 'SPAGNA', 'vetusta morla': 'SPAGNA',
+      'raphael': 'SPAGNA', 'julio iglesias': 'SPAGNA', 'rocío jurado': 'SPAGNA',
+      'rocio jurado': 'SPAGNA', 'isabel pantoja': 'SPAGNA', 'miguel bosé': 'SPAGNA',
+      'miguel bose': 'SPAGNA', 'alaska': 'SPAGNA', 'alaska y dinarama': 'SPAGNA',
+      'fangoria': 'SPAGNA', 'mónica naranjo': 'SPAGNA', 'monica naranjo': 'SPAGNA',
+      'luz casal': 'SPAGNA', 'ana belén': 'SPAGNA', 'ana belen': 'SPAGNA',
+      'víctor manuel': 'SPAGNA', 'victor manuel': 'SPAGNA', 'mecano': 'SPAGNA',
+      'hombres g': 'SPAGNA', 'la oreja de van gogh': 'SPAGNA', 'amaral': 'SPAGNA',
+      'alejandro sanz': 'SPAGNA', 'david bisbal': 'SPAGNA', 'pablo alborán': 'SPAGNA',
+      'pablo alboran': 'SPAGNA', 'dani martín': 'SPAGNA', 'dani martin': 'SPAGNA',
+      'el canto del loco': 'SPAGNA', 'leiva': 'SPAGNA', 'pereza': 'SPAGNA',
+      'aitana': 'SPAGNA', 'lola índigo': 'SPAGNA', 'lola indigo': 'SPAGNA',
+      'héroes del silencio': 'SPAGNA', 'heroes del silencio': 'SPAGNA',
+      'los rodríguez': 'SPAGNA', 'los rodriguez': 'SPAGNA', 'extremoduro': 'SPAGNA',
+      'fito & fitipaldis': 'SPAGNA', 'ska-p': 'SPAGNA', 'nacho vegas': 'SPAGNA',
+      'love of lesbian': 'SPAGNA', 'izal': 'SPAGNA', 'sidonie': 'SPAGNA',
+      'belako': 'SPAGNA', 'cariño': 'SPAGNA', 'carino': 'SPAGNA',
+      'delaporte': 'SPAGNA', 'john talabot': 'SPAGNA', 'alizzz': 'SPAGNA',
+      'pional': 'SPAGNA', 'c. tangana': 'SPAGNA', 'nathy peluso': 'SPAGNA',
+      'bad gyal': 'SPAGNA', 'rigoberta bandini': 'SPAGNA',
+      'maría josé llergo': 'SPAGNA', 'maria jose llergo': 'SPAGNA',
+      'ana mena': 'SPAGNA', 'kase.o': 'SPAGNA', 'violadores del verso': 'SPAGNA',
+      'nach': 'SPAGNA', 'ayax y prok': 'SPAGNA', 'morad': 'SPAGNA',
+      'beny jr': 'SPAGNA', 'rels b': 'SPAGNA', 'cruz cafuné': 'SPAGNA',
+      'cruz cafune': 'SPAGNA', 'saiko': 'SPAGNA', 'maikel delacalle': 'SPAGNA',
+      'jc reyes': 'SPAGNA',
+
+      // PORTO RICO & CARAIBI LATINI 
+      'daddy yankee': 'PORTO RICO', 'don omar': 'PORTO RICO', 'wisin & yandel': 'PORTO RICO',
+      'ozuna': 'PORTO RICO', 'rauw alejandro': 'PORTO RICO', 'jhayco': 'PORTO RICO',
+      'jhay cortez': 'PORTO RICO', 'arcángel': 'PORTO RICO', 'arcangel': 'PORTO RICO',
+      'tego calderón': 'PORTO RICO', 'tego calderon': 'PORTO RICO', 'young miko': 'PORTO RICO',
+      'nicky jam': 'PORTO RICO', 'ricky martin': 'PORTO RICO', 'chayanne': 'PORTO RICO',
+      'marc anthony': 'PORTO RICO', 'luis fonsi': 'PORTO RICO', 'celia cruz': 'PORTO RICO',
+      'rubén blades': 'PORTO RICO', 'ruben blades': 'PORTO RICO', 'juan luis guerra': 'PORTO RICO',
+      'romeo santos': 'PORTO RICO',
+
+      // COLOMBIA 
+      'shakira': 'COLOMBIA', 'juanes': 'COLOMBIA', 'carlos vives': 'COLOMBIA',
+      'sebastián yatra': 'COLOMBIA', 'sebastian yatra': 'COLOMBIA', 'camilo': 'COLOMBIA',
+      'kali uchis': 'COLOMBIA', 'maluma': 'COLOMBIA', 'karol g': 'COLOMBIA',
+      'blessd': 'COLOMBIA', 'ñejo': 'COLOMBIA', 'nejo': 'COLOMBIA',
+
+      // MESSICO 
+      'vicente fernández': 'MESSICO', 'vicente fernandez': 'MESSICO',
+      'alejandro fernández': 'MESSICO', 'alejandro fernandez': 'MESSICO',
+      'chavela vargas': 'MESSICO', 'juan gabriel': 'MESSICO',
+      'luis miguel': 'MESSICO', 'natanael cano': 'MESSICO',
+      'fuerza regida': 'MESSICO', 'junior h': 'MESSICO',
+      'carín león': 'MESSICO', 'carin leon': 'MESSICO',
+      'christian nodal': 'MESSICO', 'grupo frontera': 'MESSICO',
+      'maná': 'MESSICO', 'mana': 'MESSICO', 'café tacvba': 'MESSICO',
+      'cafe tacvba': 'MESSICO', 'zoé': 'MESSICO', 'zoe': 'MESSICO',
+      'julieta venegas': 'MESSICO', 'thalía': 'MESSICO', 'thalia': 'MESSICO',
+      'paulina rubio': 'MESSICO', 'natalia lafourcade': 'MESSICO', 'carla morrison': 'MESSICO',
+
+      // ARGENTINA & URUGUAY 
+      'charly garcía': 'ARGENTINA', 'charly garcia': 'ARGENTINA',
+      'luis alberto spinetta': 'ARGENTINA', 'fito páez': 'ARGENTINA', 'fito paez': 'ARGENTINA',
+      'soda stereo': 'ARGENTINA', 'gustavo cerati': 'ARGENTINA',
+      'andrés calamaro': 'ARGENTINA', 'andres calamaro': 'ARGENTINA',
+      'los fabulosos cadillacs': 'ARGENTINA', 'mercedes sosa': 'ARGENTINA',
+      'trueno': 'ARGENTINA', 'nicki nicole': 'ARGENTINA',
+      'maría becerra': 'ARGENTINA', 'maria becerra': 'ARGENTINA',
+      'paulo londra': 'ARGENTINA', 'cazzu': 'ARGENTINA',
+      'tiago pzk': 'ARGENTINA', 'emilia': 'ARGENTINA',
+      'carlos gardel': 'ARGENTINA', 'astor piazzolla': 'ARGENTINA',
+
+      // BRASILE 
+      'joão gilberto': 'BRASILE', 'joao gilberto': 'BRASILE',
+      'antônio carlos jobim': 'BRASILE', 'antonio carlos jobim': 'BRASILE',
+      'elis regina': 'BRASILE', 'caetano veloso': 'BRASILE',
+      'gilberto gil': 'BRASILE', 'chico buarque': 'BRASILE',
+      'gal costa': 'BRASILE', 'milton nascimento': 'BRASILE',
+      'jorge ben jor': 'BRASILE', 'seu jorge': 'BRASILE',
+      'ludmilla': 'BRASILE', 'pabllo vittar': 'BRASILE',
+      'mc kevin o chris': 'BRASILE', 'gusttavo lima': 'BRASILE',
+      'marília mendonça': 'BRASILE', 'marilia mendonca': 'BRASILE',
+      'alok': 'BRASILE',
+
+      // GERMANIA, SVEZIA & PAESI BASSI 
+      'kraftwerk': 'GERMANIA', 'tangerine dream': 'GERMANIA', 'klaus schulze': 'GERMANIA',
+      'paul van dyk': 'GERMANIA', 'atb': 'GERMANIA', 'scooter': 'GERMANIA',
+      'boris brejcha': 'GERMANIA', 'sven väth': 'GERMANIA', 'sven vath': 'GERMANIA',
+      'robin schulz': 'GERMANIA', 'zedd': 'GERMANIA', 'boys noize': 'GERMANIA',
+      'monolink': 'GERMANIA', 'can': 'GERMANIA', 'neu!': 'GERMANIA',
+      'scorpions': 'GERMANIA', 'rammstein': 'GERMANIA', 'kreator': 'GERMANIA',
+      'blind guardian': 'GERMANIA', 'helloween': 'GERMANIA', 'die toten hosen': 'GERMANIA',
+      'die ärzte': 'GERMANIA', 'die aerzte': 'GERMANIA', 'tokio hotel': 'GERMANIA',
+      'marlene dietrich': 'GERMANIA', 'nico': 'GERMANIA', 'nena': 'GERMANIA',
+      'herbert grönemeyer': 'GERMANIA', 'herbert gronemeyer': 'GERMANIA', 'westernhagen': 'GERMANIA',
+      'sarah connor': 'GERMANIA', 'kim petras': 'GERMANIA', 'milky chance': 'GERMANIA',
+      'annenmaykantereit': 'GERMANIA', 'peter fox': 'GERMANIA', 'bushido': 'GERMANIA',
+      'sido': 'GERMANIA', 'kool savas': 'GERMANIA', 'cro': 'GERMANIA',
+      'marteria': 'GERMANIA', 'bonez mc': 'GERMANIA', '187 strassenbande': 'GERMANIA',
+      'rin': 'GERMANIA', 'ufo361': 'GERMANIA',
+
+      'abba': 'SVEZIA', 'roxette': 'SVEZIA', 'ace of base': 'SVEZIA',
+      'europe': 'SVEZIA', 'the cardigans': 'SVEZIA', 'axwell': 'SVEZIA',
+      'steve angello': 'SVEZIA', 'sebastian ingrosso': 'SVEZIA', 'alesso': 'SVEZIA',
+      'eric prydz': 'SVEZIA', 'robyn': 'SVEZIA', 'icona pop': 'SVEZIA',
+      'galantis': 'SVEZIA', 'zara larsson': 'SVEZIA', 'tove lo': 'SVEZIA',
+      'first aid kit': 'SVEZIA', 'josé gonzález': 'SVEZIA', 'jose gonzalez': 'SVEZIA',
+      'lykke li': 'SVEZIA', 'benjamin ingrosso': 'SVEZIA', 'veronica maggio': 'SVEZIA',
+      'jens lekman': 'SVEZIA', 'tallest man on earth': 'SVEZIA', 'kristian matsson': 'SVEZIA',
+      'refused': 'SVEZIA', 'the hives': 'SVEZIA', 'mando diao': 'SVEZIA',
+      'ghost': 'SVEZIA', 'opeth': 'SVEZIA', 'meshuggah': 'SVEZIA',
+      'in flames': 'SVEZIA', 'arch enemy': 'SVEZIA', 'sabaton': 'SVEZIA',
+      'soilwork': 'SVEZIA', 'watain': 'SVEZIA', 'sad boys': 'SVEZIA',
+      'drain gang': 'SVEZIA', 'timbuktu': 'SVEZIA', 'einar': 'SVEZIA',
+
+      'armin van buuren': 'PAESI BASSI', 'hardwell': 'PAESI BASSI', 'oliver heldens': 'PAESI BASSI',
+      'don diablo': 'PAESI BASSI', 'afrojack': 'PAESI BASSI', 'nicky romero': 'PAESI BASSI',
+      'headhunterz': 'PAESI BASSI', 'angerfist': 'PAESI BASSI', 'shocking blue': 'PAESI BASSI',
+      'golden earring': 'PAESI BASSI', 'focus': 'PAESI BASSI', 'andré rieu': 'PAESI BASSI',
+      'andre rieu': 'PAESI BASSI', 'ilse delange': 'PAESI BASSI', 'the common linnets': 'PAESI BASSI',
+      'anouk': 'PAESI BASSI', 'caro emerald': 'PAESI BASSI', 'duncan laurence': 'PAESI BASSI',
+      'joost klein': 'PAESI BASSI', 'ayreon': 'PAESI BASSI', 'arjen anthony lucassen': 'PAESI BASSI',
+      'within temptation': 'PAESI BASSI', 'epica': 'PAESI BASSI', 'delain': 'PAESI BASSI',
+      'de staat': 'PAESI BASSI', 'kensington': 'PAESI BASSI', 'di-rect': 'PAESI BASSI',
+      'ronnie flex': 'PAESI BASSI', "lil' kleine": 'PAESI BASSI', 'boef': 'PAESI BASSI',
+      'bizzey': 'PAESI BASSI', 'frenna': 'PAESI BASSI', 'josylvio': 'PAESI BASSI',
+      'sevn alias': 'PAESI BASSI', 'snelle': 'PAESI BASSI',
+
+      // GIAPPONE & COREA DEL SUD
+      'hikaru utada': 'GIAPPONE', 'ado': 'GIAPPONE', 'aimyon': 'GIAPPONE',
+      'gen hoshino': 'GIAPPONE', 'official hige dandism': 'GIAPPONE', 'king gnu': 'GIAPPONE',
+      'creepy nuts': 'GIAPPONE', 'namie amuro': 'GIAPPONE', 'ayumi hamasaki': 'GIAPPONE',
+      'one ok rock': 'GIAPPONE', 'x japan': 'GIAPPONE', "b'z": 'GIAPPONE',
+      "l'arc-en-ciel": 'GIAPPONE', 'radwimps': 'GIAPPONE', 'asian kung-fu generation': 'GIAPPONE',
+      'maximum the hormone': 'GIAPPONE', 'babymetal': 'GIAPPONE', 'dir en grey': 'GIAPPONE',
+      'lamp': 'GIAPPONE', 'toe': 'GIAPPONE', 'mariya takeuchi': 'GIAPPONE',
+      'tatsuro yamashita': 'GIAPPONE', 'anri': 'GIAPPONE', 'miki matsubara': 'GIAPPONE',
+      'haruomi hosono': 'GIAPPONE', 'ryuichi sakamoto': 'GIAPPONE', 'joe hisaishi': 'GIAPPONE',
+      'yellow magic orchestra': 'GIAPPONE', 'ymo': 'GIAPPONE', 'susumu hirasawa': 'GIAPPONE',
+      'perfume': 'GIAPPONE', 'kyary pamyu pamyu': 'GIAPPONE', 'm-flo': 'GIAPPONE',
+      'nujabes': 'GIAPPONE', 'kz': 'GIAPPONE', 'livetune': 'GIAPPONE',
+      'ryo': 'GIAPPONE', 'supercell': 'GIAPPONE', 'deco*27': 'GIAPPONE',
+
+      'twice': 'COREA DEL SUD', 'seventeen': 'COREA DEL SUD', 'aespa': 'COREA DEL SUD',
+      'le sserafim': 'COREA DEL SUD', 'ive': 'COREA DEL SUD', 'red velvet': 'COREA DEL SUD',
+      'exo': 'COREA DEL SUD', 'shinee': 'COREA DEL SUD', 'bigbang': 'COREA DEL SUD',
+      '2ne1': 'COREA DEL SUD', "girls' generation": 'COREA DEL SUD', 'iu': 'COREA DEL SUD',
+      'jungkook': 'COREA DEL SUD', 'jimin': 'COREA DEL SUD', 'v': 'COREA DEL SUD',
+      'rm': 'COREA DEL SUD', 'j-hope': 'COREA DEL SUD', 'suga': 'COREA DEL SUD',
+      'agust d': 'COREA DEL SUD', 'jennie': 'COREA DEL SUD', 'rosé': 'COREA DEL SUD',
+      'rose': 'COREA DEL SUD', 'jisoo': 'COREA DEL SUD', 'taeyeon': 'COREA DEL SUD',
+      'g-dragon': 'COREA DEL SUD', 'zico': 'COREA DEL SUD', 'sunmi': 'COREA DEL SUD',
+      'hyuna': 'COREA DEL SUD', 'epik high': 'COREA DEL SUD', 'jay park': 'COREA DEL SUD',
+      'dean': 'COREA DEL SUD', 'crush': 'COREA DEL SUD', 'zion.t': 'COREA DEL SUD',
+      'ph-1': 'COREA DEL SUD', 'beenzino': 'COREA DEL SUD', 'leehi': 'COREA DEL SUD',
+      'bibi': 'COREA DEL SUD', 'hoody': 'COREA DEL SUD', 'sik-k': 'COREA DEL SUD',
+      'gray': 'COREA DEL SUD', 'hyukoh': 'COREA DEL SUD', 'the rose': 'COREA DEL SUD',
+      'jannabi': 'COREA DEL SUD', 'akmu': 'COREA DEL SUD', 'akdong musician': 'COREA DEL SUD',
+      'day6': 'COREA DEL SUD', 'wave to earth': 'COREA DEL SUD', 'bol4': 'COREA DEL SUD',
+      'paul kim': 'COREA DEL SUD',
+
+
+      // RUSSIA
+      'kino': 'RUSSIA', 'viktor tsoi': 'RUSSIA', 'ddt': 'RUSSIA',
+      'basta': 'RUSSIA', 'noggano': 'RUSSIA', 'oxxxymiron': 'RUSSIA',
+      'skryptonite': 'RUSSIA', 'miyagi': 'RUSSIA', 'miyagi & endspiel': 'RUSSIA',
+      'endspiel': 'RUSSIA', 'pharaoh': 'RUSSIA', 'kizaru': 'RUSSIA',
+      'feduk': 'RUSSIA', 'eldzhey': 'RUSSIA', 'instasamka': 'RUSSIA',
+      'moneytalk': 'RUSSIA', 'ic3peak': 'RUSSIA', 'molchat doma': 'RUSSIA',
+      'little big': 'RUSSIA', 't.a.t.u.': 'RUSSIA', 'polina gagarina': 'RUSSIA',
+      'sergey lazarev': 'RUSSIA', 'zemfira': 'RUSSIA', 'mumiy troll': 'RUSSIA',
+      'bi-2': 'RUSSIA', 'pyrokinesis': 'RUSSIA', 'markul': 'RUSSIA',
+      'obladaet': 'RUSSIA', 'boulevard depo': 'RUSSIA', 'big baby tape': 'RUSSIA',
     };
 
     const MARKET_TO_COUNTRY = {
       'IT': 'ITALIA', 'GB': 'UK', 'FR': 'FRANCIA', 'ES': 'SPAGNA', 'DE': 'GERMANIA',
       'SE': 'SVEZIA', 'NL': 'PAESI BASSI', 'CH': 'SVIZZERA', 'PT': 'PORTOGALLO',
       'BR': 'BRASILE', 'MX': 'MESSICO', 'AR': 'ARGENTINA', 'PR': 'PORTO RICO',
-      'CA': 'CANADA', 'JP': 'GIAPPONE', 'KR': 'COREA DEL SUD', 'AU': 'AUSTRALIA', 'US': 'USA'
+      'CA': 'CANADA', 'JP': 'GIAPPONE', 'KR': 'COREA DEL SUD', 'AU': 'AUSTRALIA', 'US': 'USA',
+      'RU': 'RUSSIA'
     };
 
     const originCache = new Map();
@@ -403,6 +751,271 @@
         const cachedName = originCache.get(cacheKey);
         return { name: cachedName, coords: COUNTRY_COORDS[cachedName] || COUNTRY_COORDS['USA'] };
       }
+
+      //thasup mondo
+     let lastCheckedTrackKey = null;
+     let isThasupSpaceActive = false;
+
+    function isPureThasupTrack(track) {
+        if (!track) return false;
+  
+        const artists = Array.isArray(track.artists) ? track.artists : [];
+        const mainArtist = (artists[0]?.name || '').trim().toLowerCase();
+        const isMainThasup = mainArtist === 'thasup' || mainArtist === 'tha supreme';
+      
+        if (!isMainThasup) {
+          return false;
+        }
+      
+        const title = (track.name || '').toLowerCase();
+        const thasupAsGuestInTitle = /\b(feat\.?|ft\.?)\b[^()[\]]*\b(thasup|tha supreme)\b/i.test(title);
+        if (thasupAsGuestInTitle) {
+          return false;
+        }
+      
+        return true;
+      }
+
+      /**
+       * Gestisce l'ingresso e l'uscita dallo spazio dedicato a thasup
+       * solo quando cambia effettivamente la traccia.
+       */
+      function handleTrackSpaceTransition(track) {
+        const trackKey = track
+          ? (track.uri || track.id || `${track.name || ''}__${(track.artists || []).map(a => a.name).join(',')}`).toLowerCase()
+          : '__no_track__';
+      
+        if (trackKey === lastCheckedTrackKey) return;
+        lastCheckedTrackKey = trackKey;
+      
+        const shouldEnterThasup = isThasupMainTrack(track);
+      
+        if (shouldEnterThasup && !isThasupSpaceActive) {
+          enterThasupSpace();
+          isThasupSpaceActive = true;
+        } else if (!shouldEnterThasup && isThasupSpaceActive) {
+          exitThasupSpace();
+          isThasupSpaceActive = false;
+        }
+      }
+
+      /**
+       * Costruisce il pianeta viola e il cappuccio volante con corna e aureola.
+       */
+      function createThasupScene(targetScene) {
+        if (!targetScene || typeof THREE === 'undefined') return null;
+      
+        const group = new THREE.Group();
+        group.name = 'thasupSceneGroup';
+        group.visible = false;
+        targetScene.add(group);
+      
+        // Luci dedicate alla zona thasup
+        const ambientLight = new THREE.AmbientLight(0x4c1d95, 1.4);
+        group.add(ambientLight);
+      
+        const keyLight = new THREE.PointLight(0xa855f7, 3.4, 28);
+        keyLight.position.set(3.5, 3.0, 4.2);
+        group.add(keyLight);
+      
+        const rimLight = new THREE.PointLight(0xe879f9, 2.5, 28);
+        rimLight.position.set(-3.5, -1.5, -2.5);
+        group.add(rimLight);
+      
+        // Pianeta centrale viola scuro
+        const planetGroup = new THREE.Group();
+        group.add(planetGroup);
+      
+        const planetMesh = new THREE.Mesh(
+          new THREE.SphereGeometry(1.15, 48, 48),
+          new THREE.MeshStandardMaterial({
+            color: 0x2e1065,
+            emissive: 0x3b0764,
+            emissiveIntensity: 0.45,
+            roughness: 0.55,
+            metalness: 0.25
+          })
+        );
+        planetGroup.add(planetMesh);
+      
+        const atmosphereMesh = new THREE.Mesh(
+          new THREE.SphereGeometry(1.23, 40, 40),
+          new THREE.MeshBasicMaterial({
+            color: 0xa855f7,
+            transparent: true,
+            opacity: 0.18,
+            wireframe: true
+          })
+        );
+        planetGroup.add(atmosphereMesh);
+      
+        const ringMesh = new THREE.Mesh(
+          new THREE.TorusGeometry(1.65, 0.018, 16, 100),
+          new THREE.MeshBasicMaterial({
+            color: 0xd8b4fe,
+            transparent: true,
+            opacity: 0.65
+          })
+        );
+        ringMesh.rotation.x = Math.PI * 0.38;
+        ringMesh.rotation.y = Math.PI * 0.14;
+        planetGroup.add(ringMesh);
+      
+        // Cappuccio volante con corna e aureola
+        const hoodEntity = new THREE.Group();
+        hoodEntity.position.set(0, 0.35, 2.15);
+        hoodEntity.scale.setScalar(0.55);
+        group.add(hoodEntity);
+      
+        const hoodMaterial = new THREE.MeshStandardMaterial({
+          color: 0x6b21a8,
+          emissive: 0x3b0764,
+          emissiveIntensity: 0.5,
+          roughness: 0.45,
+          metalness: 0.2,
+          side: THREE.DoubleSide
+        });
+      
+        const hoodBody = new THREE.Mesh(
+          new THREE.ConeGeometry(0.72, 1.25, 32, 1, true),
+          hoodMaterial
+        );
+        hoodBody.rotation.x = -0.22;
+        hoodEntity.add(hoodBody);
+      
+        const hoodTop = new THREE.Mesh(
+          new THREE.SphereGeometry(0.46, 28, 28, 0, Math.PI * 2, 0, Math.PI * 0.65),
+          hoodMaterial
+        );
+        hoodTop.position.set(0, 0.24, -0.04);
+        hoodTop.rotation.x = -0.25;
+        hoodEntity.add(hoodTop);
+      
+        const hoodVoid = new THREE.Mesh(
+          new THREE.SphereGeometry(0.42, 24, 24),
+          new THREE.MeshBasicMaterial({ color: 0x090314 })
+        );
+        hoodVoid.position.set(0, -0.05, 0.14);
+        hoodVoid.scale.set(0.95, 1.1, 0.65);
+        hoodEntity.add(hoodVoid);
+      
+        const hornMaterial = new THREE.MeshStandardMaterial({
+          color: 0xf3e8ff,
+          emissive: 0xc084fc,
+          emissiveIntensity: 0.65,
+          roughness: 0.25,
+          metalness: 0.3
+        });
+      
+        const leftHorn = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.58, 18), hornMaterial);
+        leftHorn.position.set(-0.46, 0.52, -0.02);
+        leftHorn.rotation.z = 0.55;
+        leftHorn.rotation.x = -0.15;
+        hoodEntity.add(leftHorn);
+      
+        const rightHorn = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.58, 18), hornMaterial);
+        rightHorn.position.set(0.46, 0.52, -0.02);
+        rightHorn.rotation.z = -0.55;
+        rightHorn.rotation.x = -0.15;
+        hoodEntity.add(rightHorn);
+      
+        const haloRing = new THREE.Mesh(
+          new THREE.TorusGeometry(0.42, 0.032, 16, 64),
+          new THREE.MeshStandardMaterial({
+            color: 0xf5d0fe,
+            emissive: 0xe879f9,
+            emissiveIntensity: 1.4,
+            roughness: 0.15,
+            metalness: 0.1
+          })
+        );
+        haloRing.position.set(0, 0.96, -0.05);
+        haloRing.rotation.x = Math.PI * 0.42;
+        hoodEntity.add(haloRing);
+      
+        return {
+          group,
+          planetGroup,
+          planetMesh,
+          atmosphereMesh,
+          ringMesh,
+          hoodEntity,
+          haloRing
+        };
+      }
+      
+      const thasupRig = typeof scene !== 'undefined' ? createThasupScene(scene) : null;
+      const thasupSceneGroup = thasupRig ? thasupRig.group : null;
+      
+      /**
+       * Attiva lo spazio viola e il pianeta/cappuccio di thasup.
+       */
+      function enterThasupSpace() {
+        if (typeof applyThemeAccentColors === 'function') {
+          applyThemeAccentColors([168, 85, 247], [232, 121, 249]);
+        }
+      
+        if (typeof globeGroup !== 'undefined' && globeGroup) {
+          globeGroup.visible = false;
+        }
+        if (thasupSceneGroup) {
+          thasupSceneGroup.visible = true;
+        }
+      }
+      
+      /**
+       * Ripristina il mondo standard di Aether Vibe e la palette del brano.
+       */
+      function exitThasupSpace() {
+        if (thasupSceneGroup) {
+          thasupSceneGroup.visible = false;
+        }
+        if (typeof globeGroup !== 'undefined' && globeGroup) {
+          globeGroup.visible = true;
+        }
+      
+        if (
+          typeof activeToken !== 'undefined' &&
+          activeToken &&
+          typeof coverImage !== 'undefined' &&
+          coverImage.complete &&
+          coverImage.naturalWidth &&
+          coverImage.getAttribute('src') &&
+          typeof extractPaletteFromCover === 'function'
+        ) {
+          extractPaletteFromCover(coverImage);
+        } else if (
+          typeof applyThemeAccentColors === 'function' &&
+          typeof DEFAULT_ACCENT_RGB !== 'undefined' &&
+          typeof DEFAULT_SECONDARY_RGB !== 'undefined'
+        ) {
+          applyThemeAccentColors(DEFAULT_ACCENT_RGB, DEFAULT_SECONDARY_RGB);
+        }
+      }
+      
+      /**
+       * Aggiorna il movimento del pianeta, del cappuccio, delle corna e dell'aureola.
+       * Chiamala dentro il tuo loop `animate()`.
+       */
+      function updateThasupScene(nowMs = performance.now()) {
+        if (!isThasupSpaceActive || !thasupRig || !thasupRig.group.visible) return;
+      
+        const t = nowMs * 0.001;
+        const { planetMesh, atmosphereMesh, ringMesh, hoodEntity, haloRing } = thasupRig;
+      
+        planetMesh.rotation.y += 0.004;
+        atmosphereMesh.rotation.y -= 0.0025;
+        ringMesh.rotation.z += 0.003;
+      
+        hoodEntity.position.y = 0.35 + Math.sin(t * 2.2) * 0.12;
+        hoodEntity.rotation.y = Math.sin(t * 1.3) * 0.25;
+        hoodEntity.rotation.z = Math.cos(t * 1.7) * 0.05;
+      
+        haloRing.position.y = 0.96 + Math.sin(t * 3.1) * 0.03;
+        haloRing.rotation.z += 0.015;
+      }
+
+      
 
       const artists = Array.isArray(track.artists) ? track.artists : [];
 
@@ -520,7 +1133,7 @@
     const coverImage = new Image();
     coverImage.crossOrigin = 'anonymous';
     coverImage.onload = () => {
-      if (activeToken && coverImage.getAttribute('src')) {
+      if (activeToken && coverImage.getAttribute('src') && !isThasupSpaceActive) {
         extractPaletteFromCover(coverImage);
       }
     };
@@ -686,6 +1299,7 @@
 
       const origin = detectOriginCountry(track);
       setTargetOrigin(origin.name, origin.coords);
+      handleTrackSpaceTransition(track);
 
       const artistName = (track.artists && track.artists[0]) ? track.artists[0].name : 'Artista sconosciuto';
       document.getElementById('track-name').textContent = `${artistName} - ${track.name}`;
@@ -884,6 +1498,15 @@
       document.getElementById('track-name').textContent = 'IN ATTESA DI SPOTIFY';
       document.getElementById('lyric-line-1').textContent = 'AETHER VIBE';
       document.getElementById('lyric-line-2').textContent = 'CONNECTED';
+
+      clearAllImages();
+      if (typeof isThasupSpaceActive !== 'undefined' && isThasupSpaceActive && typeof exitThasupSpace === 'function') {
+        lastCheckedTrackKey = null;
+        isThasupSpaceActive = false;
+        exitThasupSpace();
+      }
+      applyThemeAccentColors(DEFAULT_ACCENT_RGB, DEFAULT_SECONDARY_RGB);
+      
     }
 
     function initSpotifySession(token) {
@@ -1303,6 +1926,14 @@
     const dirLight = new THREE.DirectionalLight(0xffaa44, 1.5);
     dirLight.position.set(5, 3, 5);
     scene.add(dirLight);
+
+    const globeGroup = new THREE.Group();
+    globeGroup.position.set(-1.55, -0.15, 0);
+    globeGroup.scale.set(1.18, 1.18, 1.18);
+    scene.add(globeGroup);
+
+    const thasupRig = createThasupScene(scene);
+    const thasupSceneGroup = thasupRig ? thasupRig.group : null;
 
     const worldTexture = createWorldMapTexture();
     const earthGeo = new THREE.SphereGeometry(1.75, 96, 96);
