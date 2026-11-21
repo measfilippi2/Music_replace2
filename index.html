@@ -296,44 +296,154 @@
     ].join(' ');
     const MAX_TRACKS = 500;
 
-    const COUNTRY_COORDS = {
+   const COUNTRY_COORDS = {
       'ITALIA': { lat: 41.9, lon: 12.5 },
       'USA': { lat: 39.8, lon: -98.5 },
       'UK': { lat: 54.0, lon: -2.0 },
       'FRANCIA': { lat: 46.6, lon: 2.2 },
       'SPAGNA': { lat: 40.4, lon: -3.7 },
       'GERMANIA': { lat: 51.1, lon: 10.4 },
-      'GIAPPONE': { lat: 36.2, lon: 138.2 },
+      'SVEZIA': { lat: 60.1, lon: 18.6 },
+      'PAESI BASSI': { lat: 52.1, lon: 5.3 },
+      'SVIZZERA': { lat: 46.8, lon: 8.2 },
+      'PORTOGALLO': { lat: 39.4, lon: -8.2 },
       'BRASILE': { lat: -14.2, lon: -51.9 },
+      'MESSICO': { lat: 23.6, lon: -102.5 },
+      'ARGENTINA': { lat: -38.4, lon: -63.6 },
+      'PORTO RICO': { lat: 18.2, lon: -66.6 },
+      'CANADA': { lat: 56.1, lon: -106.3 },
+      'GIAPPONE': { lat: 36.2, lon: 138.2 },
       'COREA DEL SUD': { lat: 35.9, lon: 127.7 },
-      'PORTOGALLO': { lat: 39.4, lon: -8.2 }
+      'AUSTRALIA': { lat: -25.3, lon: 133.8 }
     };
 
     const ARTIST_COUNTRY_MAP = {
-      'sfera ebbasta': 'ITALIA',
-      'lazza': 'ITALIA',
-      'geolier': 'ITALIA',
-      'thasup': 'ITALIA',
-      'salmo': 'ITALIA',
-      'marracash': 'ITALIA',
-      'gue': 'ITALIA',
-      'baby gang': 'ITALIA',
-      'anna': 'ITALIA',
-      'tony boy': 'ITALIA',
-      'drake': 'USA',
-      'travis scott': 'USA',
-      'kendrick lamar': 'USA',
-      '21 savage': 'USA',
-      'post malone': 'USA',
-      'central cee': 'UK',
-      'dave': 'UK',
-      'fred again..': 'UK',
-      'ninho': 'FRANCIA',
-      'jul': 'FRANCIA',
-      'rosalia': 'SPAGNA',
-      'bad bunny': 'PORTOGALLO'
+      // Italia
+      'sfera ebbasta': 'ITALIA', 'lazza': 'ITALIA', 'geolier': 'ITALIA', 'thasup': 'ITALIA',
+      'salmo': 'ITALIA', 'marracash': 'ITALIA', 'gue': 'ITALIA', 'guè': 'ITALIA',
+      'baby gang': 'ITALIA', 'anna': 'ITALIA', 'tony boy': 'ITALIA', 'kid yugi': 'ITALIA',
+      'artie 5ive': 'ITALIA', 'rondo': 'ITALIA', 'rhove': 'ITALIA', 'shiva': 'ITALIA',
+      'pak': 'ITALIA', 'niky savage': 'ITALIA', 'diss g': 'ITALIA', 'capo plaza': 'ITALIA',
+      'tedua': 'ITALIA', 'izi': 'ITALIA', 'ernia': 'ITALIA', 'rkomi': 'ITALIA',
+      'fabri fibra': 'ITALIA', 'noyz narcos': 'ITALIA', 'gemitaiz': 'ITALIA', 'madman': 'ITALIA',
+      'mahmood': 'ITALIA', 'blanco': 'ITALIA', 'maneskin': 'ITALIA', 'måneskin': 'ITALIA',
+      'olmo': 'ITALIA', 'simba la rue': 'ITALIA', 'ghali': 'ITALIA', 'rose villain': 'ITALIA',
+      'tony effe': 'ITALIA', 'franco126': 'ITALIA', 'carl brave': 'ITALIA', 'pazzesco': 'ITALIA',
+
+      // USA
+      'drake': 'USA', 'travis scott': 'USA', 'kendrick lamar': 'USA', '21 savage': 'USA',
+      'post malone': 'USA', 'future': 'USA', 'metro boomin': 'USA', 'lil baby': 'USA',
+      'gunna': 'USA', 'playboi carti': 'USA', 'kanye west': 'USA', 'ye': 'USA',
+      'eminem': 'USA', 'j. cole': 'USA', 'asap rocky': 'USA', 'a$ap rocky': 'USA',
+      'tyler, the creator': 'USA', 'don toliver': 'USA', 'lil uzi vert': 'USA', 'juice wrld': 'USA',
+      'xxxtentacion': 'USA', 'polo g': 'USA', 'lil durk': 'USA', 'king von': 'USA',
+      'billie eilish': 'USA', 'olivia rodrigo': 'USA', 'taylor swift': 'USA', 'the weeknd': 'CANADA',
+      'marshmello': 'USA', 'khalid': 'USA', 'doja cat': 'USA', 'sza': 'USA',
+
+      // UK
+      'central cee': 'UK', 'dave': 'UK', 'fred again..': 'UK', 'aj tracey': 'UK',
+      'headie one': 'UK', 'stormzy': 'UK', 'skepta': 'UK', 'j hus': 'UK',
+      'stefflon don': 'UK', 'little simz': 'UK', 'pinkpantheress': 'UK', 'dua lipa': 'UK',
+      'harry styles': 'UK', 'gorillaz': 'UK', 'disclosure': 'UK', 'calvin harris': 'UK',
+
+      // Francia
+      'ninho': 'FRANCIA', 'jul': 'FRANCIA', 'pnl': 'FRANCIA', 'damso': 'FRANCIA',
+      'gazo': 'FRANCIA', 'tiakola': 'FRANCIA', ' Hamza': 'FRANCIA', 'hamza': 'FRANCIA',
+      'booba': 'FRANCIA', 'kaaris': 'FRANCIA', 'aya nakamura': 'FRANCIA', 'dj snake': 'FRANCIA',
+      'david guetta': 'FRANCIA', 'daft punk': 'FRANCIA', 'm83': 'FRANCIA',
+
+      // Spagna & America Latina
+      'rosalia': 'SPAGNA', 'rosalía': 'SPAGNA', 'quevedo': 'SPAGNA', 'myke towers': 'PORTO RICO',
+      'bad bunny': 'PORTO RICO', 'anuel aa': 'PORTO RICO', 'j balvin': 'SPAGNA', 'feid': 'SPAGNA',
+      'peso pluma': 'MESSICO', 'bizarrap': 'ARGENTINA', 'duki': 'ARGENTINA', 'luísa sonza': 'BRASILE',
+      'luisa sonza': 'BRASILE', 'anitta': 'BRASILE', 'ryan castro': 'SPAGNA',
+
+      // Germania, Svezia, Paesi Bassi, Svizzera
+      'capital bra': 'GERMANIA', 'raf camora': 'GERMANIA', 'luciano': 'GERMANIA', 'apache 207': 'GERMANIA',
+      'yung lean': 'SVEZIA', 'bladee': 'SVEZIA', 'swedish house mafia': 'SVEZIA', 'avicii': 'SVEZIA',
+      'martin garrix': 'PAESI BASSI', 'tiësto': 'PAESI BASSI', 'tiesto': 'PAESI BASSI',
+
+      // Giappone & Corea del Sud
+      'yoasobi': 'GIAPPONE', 'kenshi yonezu': 'GIAPPONE', 'lisa': 'GIAPPONE', 'fujii kaze': 'GIAPPONE',
+      'bts': 'COREA DEL SUD', 'blackpink': 'COREA DEL SUD', 'stray kids': 'COREA DEL SUD', 'newjeans': 'COREA DEL SUD'
     };
 
+    const MARKET_TO_COUNTRY = {
+      'IT': 'ITALIA',
+      'GB': 'UK',
+      'FR': 'FRANCIA',
+      'ES': 'SPAGNA',
+      'DE': 'GERMANIA',
+      'SE': 'SVEZIA',
+      'NL': 'PAESI BASSI',
+      'CH': 'SVIZZERA',
+      'PT': 'PORTOGALLO',
+      'BR': 'BRASILE',
+      'MX': 'MESSICO',
+      'AR': 'ARGENTINA',
+      'PR': 'PORTO RICO',
+      'CA': 'CANADA',
+      'JP': 'GIAPPONE',
+      'KR': 'COREA DEL SUD',
+      'AU': 'AUSTRALIA',
+      'US': 'USA'
+    };
+
+    const originCache = new Map();
+
+    function detectByScriptOrText(text) {
+      if (!text) return null;
+      if (/[\uAC00-\uD7AF]/.test(text)) return 'COREA DEL SUD';
+      if (/[\u3040-\u30FF\u4E00-\u9FFF]/.test(text)) return 'GIAPPONE';
+      return null;
+    }
+
+    function detectOriginCountry(track) {
+      if (!track) return { name: 'ITALIA', coords: COUNTRY_COORDS['ITALIA'] };
+
+      const cacheKey = (track.uri || track.id || `${track.name}__${(track.artists && track.artists[0] && track.artists[0].name) || ''}`).toLowerCase();
+      if (originCache.has(cacheKey)) {
+        const cachedName = originCache.get(cacheKey);
+        return { name: cachedName, coords: COUNTRY_COORDS[cachedName] || COUNTRY_COORDS['USA'] };
+      }
+
+      const artists = Array.isArray(track.artists) ? track.artists : [];
+
+      // 1. Controlla tutti gli artisti del brano (principale + feat)
+      for (const art of artists) {
+        const cleanName = (art && art.name) ? art.name.toLowerCase().trim() : '';
+        if (ARTIST_COUNTRY_MAP[cleanName]) {
+          const found = ARTIST_COUNTRY_MAP[cleanName];
+          originCache.set(cacheKey, found);
+          return { name: found, coords: COUNTRY_COORDS[found] };
+        }
+      }
+
+      // 2. Controlla alfabeti/scritture specifiche nel titolo o negli artisti
+      const combinedText = `${track.name || ''} ${artists.map(a => a.name).join(' ')}`;
+      const scriptCountry = detectByScriptOrText(combinedText);
+      if (scriptCountry && COUNTRY_COORDS[scriptCountry]) {
+        originCache.set(cacheKey, scriptCountry);
+        return { name: scriptCountry, coords: COUNTRY_COORDS[scriptCountry] };
+      }
+
+      // 3. Controlla mercati limitati se presenti
+      const markets = track.available_markets || (track.album && track.album.available_markets) || [];
+      if (Array.isArray(markets) && markets.length > 0 && markets.length <= 15) {
+        for (const code of markets) {
+          if (MARKET_TO_COUNTRY[code] && COUNTRY_COORDS[MARKET_TO_COUNTRY[code]]) {
+            const mCountry = MARKET_TO_COUNTRY[code];
+            originCache.set(cacheKey, mCountry);
+            return { name: mCountry, coords: COUNTRY_COORDS[mCountry] };
+          }
+        }
+      }
+
+      // 4. Fallback predefinito quando il brano non ha corrispondenze locali
+      const fallback = 'USA';
+      originCache.set(cacheKey, fallback);
+      return { name: fallback, coords: COUNTRY_COORDS[fallback] };
+    }
     function detectOriginCountry(track) {
       if (!track) return { name: 'ITALIA', coords: COUNTRY_COORDS['ITALIA'] };
       const artistName = (track.artists && track.artists[0] && track.artists[0].name)
