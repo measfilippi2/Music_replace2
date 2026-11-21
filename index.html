@@ -340,7 +340,7 @@
     const ARTIST_COUNTRY_MAP = {
       // Italia
       'sfera ebbasta': 'ITALIA', 'lazza': 'ITALIA', 'geolier': 'ITALIA',
-      'thasup': 'ITALIA', 'tha supreme': 'ITALIA', 'young moonstar': 'ITALIA',
+      'thasup': 'ITALIA', 'tha supreme': 'ITALIA', 'yungest Moonstar': 'ITALIA',
       'salmo': 'ITALIA', 'marracash': 'ITALIA', 'gue': 'ITALIA', 'guè': 'ITALIA',
       'baby gang': 'ITALIA', 'anna': 'ITALIA', 'anna pepe': 'ITALIA', 'anna (anna pepe)': 'ITALIA',
       'tony boy': 'ITALIA', 'kid yugi': 'ITALIA', 'artie 5ive': 'ITALIA', 'rondo': 'ITALIA',
@@ -819,12 +819,12 @@
 
       const artists = Array.isArray(track.artists) ? track.artists : [];
       const mainArtist = (artists[0]?.name || '').trim().toLowerCase();
-      const thasupAliases = new Set(['thasup', 'tha supreme', 'young moonstar']);
+      const thasupAliases = new Set(['thasup', 'tha supreme', 'yungest Moonstar']);
       const isMainThasup = thasupAliases.has(mainArtist);
       if (!isMainThasup) return false;
 
       const title = (track.name || '').toLowerCase();
-      const thasupAsGuestInTitle = /\b(feat\.?|ft\.?)\b[^()\[\]]*\b(thasup|tha supreme|young moonstar)\b/i.test(title);
+      const thasupAsGuestInTitle = /\b(feat\.?|ft\.?)\b[^()\[\]]*\b(thasup|tha supreme|yungest Moonstar)\b/i.test(title);
       return !thasupAsGuestInTitle;
     }
 
