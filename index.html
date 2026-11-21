@@ -340,7 +340,7 @@
     const ARTIST_COUNTRY_MAP = {
       // Italia
       'sfera ebbasta': 'ITALIA', 'lazza': 'ITALIA', 'geolier': 'ITALIA',
-      'thasup': 'ITALIA', 'tha supreme': 'ITALIA', 'yungest moonstar': 'ITALIA',
+      'thasup': 'ITALIA', 'tha supreme': 'ITALIA', 'young moonstar': 'ITALIA', 'yungest moonstar': 'ITALIA',
       'salmo': 'ITALIA', 'marracash': 'ITALIA', 'gue': 'ITALIA', 'guè': 'ITALIA',
       'baby gang': 'ITALIA', 'anna': 'ITALIA', 'anna pepe': 'ITALIA', 'anna (anna pepe)': 'ITALIA',
       'tony boy': 'ITALIA', 'kid yugi': 'ITALIA', 'artie 5ive': 'ITALIA', 'rondo': 'ITALIA',
@@ -819,12 +819,12 @@
 
       const artists = Array.isArray(track.artists) ? track.artists : [];
       const mainArtist = (artists[0]?.name || '').trim().toLowerCase();
-      const thasupAliases = new Set(['thasup', 'tha supreme', 'yungest moonstar']);
+      const thasupAliases = new Set(['thasup', 'tha supreme', 'young moonstar', 'yungest moonstar']);
       const isMainThasup = thasupAliases.has(mainArtist);
       if (!isMainThasup) return false;
 
       const title = (track.name || '').toLowerCase();
-      const thasupAsGuestInTitle = /\b(feat\.?|ft\.?)\b[^()\[\]]*\b(thasup|tha supreme|yungest moonstar)\b/i.test(title);
+      const thasupAsGuestInTitle = /\b(feat\.?|ft\.?)\b[^()\[\]]*\b(thasup|tha supreme|young moonstar|yungest moonstar)\b/i.test(title);
       return !thasupAsGuestInTitle;
     }
 
@@ -976,6 +976,240 @@
       haloRing.rotation.x = Math.PI * 0.42;
       hoodEntity.add(haloRing);
 
+      // --- AUTO ICONICA DI THASUP (MUSCLE CONVERTIBLE VIOLA CON CORNETTI & AUREOLA) ---
+      const thasupCar = new THREE.Group();
+      thasupCar.position.set(1.75, -0.35, 1.45);
+      thasupCar.scale.setScalar(0.42);
+      thasupCar.rotation.set(0.06, -0.58, -0.05);
+      group.add(thasupCar);
+
+      const carBodyMat = new THREE.MeshStandardMaterial({
+        color: 0xa855f7,
+        emissive: 0x581c87,
+        emissiveIntensity: 0.42,
+        roughness: 0.28,
+        metalness: 0.45
+      });
+
+      const carTrimDarkMat = new THREE.MeshStandardMaterial({
+        color: 0x18181b,
+        emissive: 0x2e1065,
+        emissiveIntensity: 0.22,
+        roughness: 0.45,
+        metalness: 0.5
+      });
+
+      const carInteriorTanMat = new THREE.MeshStandardMaterial({
+        color: 0xe7c675,
+        emissive: 0x453512,
+        emissiveIntensity: 0.18,
+        roughness: 0.65,
+        metalness: 0.1
+      });
+
+      const carGlassMat = new THREE.MeshStandardMaterial({
+        color: 0xd8b4fe,
+        emissive: 0x7e22ce,
+        emissiveIntensity: 0.28,
+        roughness: 0.08,
+        metalness: 0.2,
+        transparent: true,
+        opacity: 0.36,
+        side: THREE.DoubleSide
+      });
+
+      const hornTipMat = new THREE.MeshStandardMaterial({
+        color: 0x27123a,
+        emissive: 0x3b0764,
+        emissiveIntensity: 0.35,
+        roughness: 0.35,
+        metalness: 0.25
+      });
+
+      const carHaloMat = new THREE.MeshStandardMaterial({
+        color: 0xfef08a,
+        emissive: 0xfacc15,
+        emissiveIntensity: 1.55,
+        roughness: 0.15,
+        metalness: 0.05
+      });
+
+      const carUnderglowMat = new THREE.MeshBasicMaterial({
+        color: 0xc084fc,
+        transparent: true,
+        opacity: 0.32,
+        side: THREE.DoubleSide
+      });
+
+      // Corpo principale muscle car (anteriore lungo + coda decappottabile)
+      const mainBody = new THREE.Mesh(
+        new THREE.BoxGeometry(1.16, 0.30, 2.52),
+        carBodyMat
+      );
+      mainBody.position.set(0, 0.16, 0.04);
+      thasupCar.add(mainBody);
+
+      // Cofano anteriore allungato con presa d'aria centrale (hood scoop)
+      const hoodPanel = new THREE.Mesh(
+        new THREE.BoxGeometry(1.12, 0.09, 1.08),
+        carBodyMat
+      );
+      hoodPanel.position.set(0, 0.32, 0.78);
+      hoodPanel.rotation.x = 0.04;
+      thasupCar.add(hoodPanel);
+
+      const hoodScoop = new THREE.Mesh(
+        new THREE.BoxGeometry(0.46, 0.08, 0.68),
+        carBodyMat
+      );
+      hoodScoop.position.set(0, 0.38, 0.72);
+      hoodScoop.rotation.x = 0.03;
+      thasupCar.add(hoodScoop);
+
+      const scoopVent = new THREE.Mesh(
+        new THREE.BoxGeometry(0.36, 0.04, 0.12),
+        carTrimDarkMat
+      );
+      scoopVent.position.set(0, 0.40, 1.04);
+      thasupCar.add(scoopVent);
+
+      // Cornetti laterali sul parafango anteriore e sulla punta del cofano/parafango
+      const fenderHornGeo = new THREE.ConeGeometry(0.085, 0.32, 16);
+
+      const leftFenderHorn = new THREE.Mesh(fenderHornGeo, hornTipMat);
+      leftFenderHorn.position.set(-0.58, 0.36, 0.56);
+      leftFenderHorn.rotation.set(0.18, 0, 0.52);
+      thasupCar.add(leftFenderHorn);
+
+      const frontCornerHornL = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.22, 14), hornTipMat);
+      frontCornerHornL.position.set(-0.55, 0.31, 1.24);
+      frontCornerHornL.rotation.set(0.25, 0, 0.45);
+      thasupCar.add(frontCornerHornL);
+
+      const frontCornerHornR = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.22, 14), hornTipMat);
+      frontCornerHornR.position.set(0.55, 0.31, 1.24);
+      frontCornerHornR.rotation.set(0.25, 0, -0.45);
+      thasupCar.add(frontCornerHornR);
+
+      // Griglia anteriore scura e fari rettangolari
+      const frontGrille = new THREE.Mesh(
+        new THREE.BoxGeometry(0.94, 0.14, 0.06),
+        carTrimDarkMat
+      );
+      frontGrille.position.set(0, 0.16, 1.31);
+      thasupCar.add(frontGrille);
+
+      const carHeadlightMat = new THREE.MeshStandardMaterial({
+        color: 0xfef9c3,
+        emissive: 0xfde047,
+        emissiveIntensity: 0.9,
+        roughness: 0.2
+      });
+      const headL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.11, 0.06), carHeadlightMat);
+      headL.position.set(-0.48, 0.17, 1.30);
+      thasupCar.add(headL);
+
+      const headR = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.11, 0.06), carHeadlightMat);
+      headR.position.set(0.48, 0.17, 1.30);
+      thasupCar.add(headR);
+
+      // Sponde decappottabile (fiancate posteriori e codino)
+      const rearQuarterL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.20, 1.18), carBodyMat);
+      rearQuarterL.position.set(-0.51, 0.36, -0.62);
+      thasupCar.add(rearQuarterL);
+
+      const rearQuarterR = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.20, 1.18), carBodyMat);
+      rearQuarterR.position.set(0.51, 0.36, -0.62);
+      thasupCar.add(rearQuarterR);
+
+      const rearDeck = new THREE.Mesh(new THREE.BoxGeometry(1.14, 0.14, 0.42), carBodyMat);
+      rearDeck.position.set(0, 0.33, -1.02);
+      thasupCar.add(rearDeck);
+
+      // Interni color crema/ocra e sedili
+      const interiorFloor = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.08, 1.16), carInteriorTanMat);
+      interiorFloor.position.set(0, 0.30, -0.44);
+      thasupCar.add(interiorFloor);
+
+      const seatL = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.22, 0.34), carInteriorTanMat);
+      seatL.position.set(-0.24, 0.41, -0.34);
+      seatL.rotation.x = -0.15;
+      thasupCar.add(seatL);
+
+      const seatR = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.22, 0.34), carInteriorTanMat);
+      seatR.position.set(0.24, 0.41, -0.34);
+      seatR.rotation.x = -0.15;
+      thasupCar.add(seatR);
+
+      // Parabrezza inclinato con cornice viola
+      const windshieldGlass = new THREE.Mesh(
+        new THREE.BoxGeometry(0.96, 0.28, 0.03),
+        carGlassMat
+      );
+      windshieldGlass.position.set(0, 0.44, 0.16);
+      windshieldGlass.rotation.x = -0.52;
+      thasupCar.add(windshieldGlass);
+
+      const windshieldFrameTop = new THREE.Mesh(
+        new THREE.BoxGeometry(0.98, 0.035, 0.045),
+        carBodyMat
+      );
+      windshieldFrameTop.position.set(0, 0.56, 0.09);
+      thasupCar.add(windshieldFrameTop);
+
+      // Aureola gialla fluttuante sopra il cofano (come nell'immagine iconica)
+      const carHalo = new THREE.Mesh(
+        new THREE.TorusGeometry(0.28, 0.032, 16, 48),
+        carHaloMat
+      );
+      carHalo.position.set(0.18, 0.72, 0.86);
+      carHalo.rotation.x = Math.PI * 0.44;
+      thasupCar.add(carHalo);
+
+      // 4 Ruote con pneumatici neri e cerchi a raggi viola scuro
+      const wheelGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.17, 24);
+      wheelGeo.rotateZ(Math.PI / 2);
+      const tireMat = new THREE.MeshStandardMaterial({
+        color: 0x141418,
+        roughness: 0.72,
+        metalness: 0.25
+      });
+      const spokeRimMat = new THREE.MeshStandardMaterial({
+        color: 0x3b0764,
+        emissive: 0x1e1b4b,
+        emissiveIntensity: 0.35,
+        roughness: 0.35,
+        metalness: 0.65
+      });
+      const rimDiscGeo = new THREE.CylinderGeometry(0.145, 0.145, 0.18, 18);
+      rimDiscGeo.rotateZ(Math.PI / 2);
+
+      const wheelCoords = [
+        [-0.58, 0.04, 0.82],
+        [0.58, 0.04, 0.82],
+        [-0.58, 0.04, -0.78],
+        [0.58, 0.04, -0.78]
+      ];
+      const carWheels = [];
+      wheelCoords.forEach(([wx, wy, wz]) => {
+        const wGroup = new THREE.Group();
+        wGroup.position.set(wx, wy, wz);
+        const tire = new THREE.Mesh(wheelGeo, tireMat);
+        const rim = new THREE.Mesh(rimDiscGeo, spokeRimMat);
+        wGroup.add(tire, rim);
+        thasupCar.add(wGroup);
+        carWheels.push(wGroup);
+      });
+
+      // Bagliore viola sotto l'auto
+      const underglowDisc = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.45, 2.75),
+        carUnderglowMat
+      );
+      underglowDisc.rotation.x = -Math.PI / 2;
+      underglowDisc.position.set(0, -0.23, 0.04);
+      thasupCar.add(underglowDisc);
+
       return {
         group,
         planetGroup,
@@ -983,7 +1217,11 @@
         atmosphereMesh,
         ringMesh,
         hoodEntity,
-        haloRing
+        haloRing,
+        thasupCar,
+        carHalo,
+        carWheels,
+        underglowDisc
       };
     }
 
@@ -1134,7 +1372,7 @@
       if (!thasupRig || !thasupRig.group.visible) return;
 
       const t = nowMs * 0.001;
-      const { planetMesh, atmosphereMesh, ringMesh, hoodEntity, haloRing } = thasupRig;
+      const { planetMesh, atmosphereMesh, ringMesh, hoodEntity, haloRing, thasupCar, carHalo, carWheels, underglowDisc } = thasupRig;
 
       planetMesh.rotation.y += 0.004;
       atmosphereMesh.rotation.y -= 0.0025;
@@ -1146,6 +1384,29 @@
 
       haloRing.position.y = 0.96 + Math.sin(t * 3.1) * 0.03;
       haloRing.rotation.z += 0.015;
+
+      if (thasupCar) {
+        const beatBoost = typeof playbackState !== 'undefined' && playbackState.isPlaying
+          ? (Math.sin(t * 5.2) * 0.04 * (playbackState.energy || 0.5))
+          : 0;
+        thasupCar.position.x = 1.75 + Math.cos(t * 0.85) * 0.18;
+        thasupCar.position.y = -0.35 + Math.sin(t * 2.4) * 0.10 + beatBoost;
+        thasupCar.position.z = 1.45 + Math.sin(t * 0.85) * 0.15;
+        thasupCar.rotation.y = -0.58 + Math.sin(t * 0.85) * 0.20;
+        thasupCar.rotation.z = -0.05 + Math.cos(t * 1.9) * 0.035;
+      }
+      if (carHalo) {
+        carHalo.position.y = 0.72 + Math.sin(t * 3.0) * 0.045;
+        carHalo.rotation.z += 0.015;
+      }
+      if (Array.isArray(carWheels)) {
+        carWheels.forEach(w => {
+          w.rotation.x += 0.09;
+        });
+      }
+      if (underglowDisc && underglowDisc.material) {
+        underglowDisc.material.opacity = 0.34 + (Math.sin(t * 4.0) * 0.12);
+      }
     }
 
     function updateOriginLabel(name) {
