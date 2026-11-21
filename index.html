@@ -2542,5 +2542,98 @@
     }
     requestAnimationFrame(renderLoop);
   </script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      onSnapshot,
+      serverTimestamp,
+      query,
+      orderBy,
+      limit
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    // --APP WEB --
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyBkvZiWWVEe9_AJfkTRHH3gLn6FZrtoqEM",
+      authDomain: "aether-audio-2b8fc.firebaseapp.com",
+      projectId: "aether-audio-2b8fc",
+      storageBucket: "aether-audio-2b8fc.firebasestorage.app",
+      messagingSenderId: "514209741887",
+      appId: "1:514209741887:web:f0c4440441c43243a20c8a"
+    };
+    const visitsCountEl = document.getElementById('visits-count');
+    const isConfigured = Boolean(
+      FIREBASE_CONFIG.apiKey &&
+      !FIREBASE_CONFIG.apiKey.startsWith("INSERISCI_") &&
+      FIREBASE_CONFIG.projectId &&
+      !FIREBASE_CONFIG.projectId.startsWith("INSERISCI_")
+    );
+
+    function getOrCreateSessionId() {
+      const key = 'aether_session_id';
+      let id = sessionStorage.getItem(key);
+      if (!id) {
+        id = 'sess_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+        sessionStorage.setItem(key, id);
+      }
+      return id;
+    }
+
+    function buildVisitPayload() {
+      const trackLabel = document.getElementById('track-name')?.textContent || 'IN ATTESA DI SPOTIFY';
+      const originLabel = document.getElementById('stat-origin')?.textContent || 'ITALIA';
+      const thasupActive = typeof window.isThasupSpaceActive !== 'undefined'
+        ? Boolean(window.isThasupSpaceActive)
+        : false;
+
+      return {
+        sessionId: getOrCreateSessionId(),
+        origin: originLabel,
+        thasupDimension: thasupActive,
+        track: trackLabel.slice(0, 120),
+        platform: navigator.platform || 'unknown',
+        language: navigator.language || 'it-IT',
+        createdAt: serverTimestamp()
+      };
+    }
+
+    if (!isConfigured) {
+      const localKey = 'aether_local_visits_count';
+      const nextLocal = (parseInt(localStorage.getItem(localKey) || '0', 10) || 0) + 1;
+      localStorage.setItem(localKey, String(nextLocal));
+      if (visitsCountEl) visitsCountEl.textContent = `${nextLocal} (LOCALE)`;
+    } else {
+      try {
+        const app = initializeApp(FIREBASE_CONFIG);
+        const db = getFirestore(app);
+        const visitsCol = collection(db, 'visits');
+
+        onSnapshot(visitsCol, (snap) => {
+          if (visitsCountEl) visitsCountEl.textContent = String(snap.size);
+        }, (err) => {
+          console.error('Errore lettura Firestore:', err);
+          if (visitsCountEl) visitsCountEl.textContent = 'ERR';
+        });
+
+        const loggedFlag = 'aether_firestore_logged_' + getOrCreateSessionId();
+        if (!sessionStorage.getItem(loggedFlag)) {
+          sessionStorage.setItem(loggedFlag, '1');
+          await addDoc(visitsCol, buildVisitPayload());
+        }
+
+        window.aetherGetRecentVisits = async (maxItems = 20) => {
+          const q = query(visitsCol, orderBy('createdAt', 'desc'), limit(maxItems));
+          const snap = await getDocs(q);
+          return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        };
+      } catch (err) {
+        console.error('Errore inizializzazione Firestore:', err);
+        if (visitsCountEl) visitsCountEl.textContent = 'OFFLINE';
+      }
+    }
+  </script>  
 </body>
 </html>
