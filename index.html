@@ -41,26 +41,50 @@
       color: rgba(255, 255, 255, 0.85); text-shadow: 0 0 12px rgba(255, 170, 68, 0.5);
     }
 
-    .lyric-container { position: absolute; top: 16%; left: 11%; z-index: 8; pointer-events: none; max-width: 520px; }
-    .lyric-ghost { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.12em; color: rgba(255, 255, 255, 0.28); text-transform: uppercase; margin-bottom: -10px; margin-left: -14px; }
-    .lyric-main { font-size: clamp(2rem, 3.6vw, 3.1rem); font-weight: 700; line-height: 1.02; letter-spacing: 0.05em; text-transform: uppercase; color: #ffffff; text-shadow: 0 2px 14px rgba(0,0,0,0.85), 0 0 22px rgba(255,180,90,0.45); }
-    .lyric-sub { display: block; font-size: clamp(1.7rem, 3vw, 2.5rem); color: rgba(240, 244, 255, 0.92); margin-left: 26px; }
+    .globe-label {
+      position: absolute; bottom: 68px; left: 24px; z-index: 10;
+      pointer-events: none;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(12, 15, 24, 0.78);
+      border: 1px solid rgba(255, 170, 68, 0.35);
+      border-radius: 10px;
+      padding: 8px 14px;
+      backdrop-filter: blur(10px);
+    }
+    .globe-label .mini {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      color: rgba(255, 200, 130, 0.75);
+      display: block;
+    }
+    .globe-label .country-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--amber-glow);
+      text-shadow: 0 0 12px rgba(255, 140, 50, 0.45);
+    }
+
+    .lyric-container { position: absolute; top: 13%; right: 8%; z-index: 8; pointer-events: none; max-width: 500px; text-align: right; }
+    .lyric-ghost { font-size: 1.2rem; font-weight: 700; letter-spacing: 0.12em; color: rgba(255, 255, 255, 0.28); text-transform: uppercase; margin-bottom: -6px; }
+    .lyric-main { font-size: clamp(1.8rem, 3.2vw, 2.8rem); font-weight: 700; line-height: 1.02; letter-spacing: 0.05em; text-transform: uppercase; color: #ffffff; text-shadow: 0 2px 14px rgba(0,0,0,0.85), 0 0 22px rgba(255,180,90,0.45); }
+    .lyric-sub { display: block; font-size: clamp(1.4rem, 2.5vw, 2.1rem); color: rgba(240, 244, 255, 0.92); margin-top: 2px; }
 
     .hud-widget {
-      position: absolute; bottom: 68px; left: 24px; z-index: 10;
+      position: absolute; bottom: 68px; right: 24px; z-index: 10;
       display: flex; align-items: center; gap: 14px;
       background: linear-gradient(135deg, rgba(16, 18, 28, 0.72), rgba(8, 10, 16, 0.45));
       border: 1px solid rgba(255, 140, 50, 0.28); border-radius: 16px; padding: 10px 18px 10px 10px;
       backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0,0,0,0.65);
     }
     .hud-dial {
-      position: relative; width: 68px; height: 68px; border-radius: 14px;
+      position: relative; width: 68px; height: 68px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       background: radial-gradient(circle, #1a0b12 45%, #3a0d16 100%);
       box-shadow: 0 0 18px rgba(255, 65, 30, 0.45);
     }
     .hud-dial svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
-    .hud-dial-core { width: 44px; height: 44px; border-radius: 10px; overflow: hidden; border: 1.5px solid rgba(255, 190, 90, 0.8); background: #0d1326; }
+    .hud-dial-core { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 1.5px solid rgba(255, 190, 90, 0.8); background: #0d1326; }
     .hud-dial-core img { width: 100%; height: 100%; object-fit: cover; }
     .hud-stats { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; line-height: 1.45; color: rgba(235, 240, 255, 0.85); }
     .hud-stats .tag { color: var(--amber-glow); font-weight: 700; margin-right: 6px; }
@@ -106,6 +130,11 @@
 
     <div class="top-right-clock" id="clock">21:59</div>
 
+    <div class="globe-label">
+      <span class="mini">TRACK ORIGIN</span>
+      <span class="country-name" id="globe-country-label">ITALIA</span>
+    </div>
+
     <div class="lyric-container">
       <div class="lyric-ghost" id="lyric-ghost">SPOTIFY</div>
       <div class="lyric-main">
@@ -117,15 +146,15 @@
     <div class="hud-widget">
       <div class="hud-dial">
         <svg viewBox="0 0 72 72">
-          <rect x="6" y="6" width="60" height="60" rx="12" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="4" />
-          <rect id="hud-ring" x="6" y="6" width="60" height="60" rx="12" fill="none" stroke="#ff6622" stroke-width="4" stroke-dasharray="180" stroke-dashoffset="65" />
+          <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="4" />
+          <circle id="hud-ring" cx="36" cy="36" r="30" fill="none" stroke="#ff6622" stroke-width="4" stroke-dasharray="188.5" stroke-dashoffset="75" stroke-linecap="round" />
         </svg>
         <div class="hud-dial-core">
           <img id="hud-thumb" alt="Cover" />
         </div>
       </div>
       <div class="hud-stats">
-        <div><span class="tag">ORIGIN</span><span id="stat-origin">GLOBE</span></div>
+        <div><span class="tag">ORIGIN</span><span id="stat-origin">ITALIA</span></div>
         <div><span class="tag">STATUS</span><span id="stat-hz">IDLE</span></div>
       </div>
     </div>
@@ -172,7 +201,6 @@
     ].join(' ');
     const MAX_TRACKS = 500;
 
-    // Mappa rapida artisti / stati per orientare il globo 3D
     const COUNTRY_COORDS = {
       'ITALIA': { lat: 41.9, lon: 12.5 },
       'USA': { lat: 39.8, lon: -98.5 },
@@ -212,7 +240,7 @@
     };
 
     function detectOriginCountry(track) {
-      if (!track) return { name: 'GLOBE', coords: COUNTRY_COORDS['ITALIA'] };
+      if (!track) return { name: 'ITALIA', coords: COUNTRY_COORDS['ITALIA'] };
       const artistName = (track.artists && track.artists[0] && track.artists[0].name)
         ? track.artists[0].name.toLowerCase().trim()
         : '';
@@ -231,6 +259,11 @@
       }
 
       return { name: 'USA', coords: COUNTRY_COORDS['USA'] };
+    }
+
+    function updateOriginLabel(name) {
+      document.getElementById('stat-origin').textContent = name;
+      document.getElementById('globe-country-label').textContent = name;
     }
 
     const coverImage = new Image();
@@ -379,7 +412,7 @@
       const origin = detectOriginCountry(track);
       playbackState.targetLat = origin.coords.lat;
       playbackState.targetLon = origin.coords.lon;
-      document.getElementById('stat-origin').textContent = origin.name;
+      updateOriginLabel(origin.name);
 
       const artistName = (track.artists && track.artists[0]) ? track.artists[0].name : 'Artista sconosciuto';
       document.getElementById('track-name').textContent = `${artistName} - ${track.name}`;
@@ -418,7 +451,6 @@
 
       spotifyPlayer.addListener('ready', ({ device_id }) => {
         deviceId = device_id;
-        document.getElementById('stat-origin').textContent = 'WEB SDK READY';
       });
 
       spotifyPlayer.addListener('not_ready', ({ device_id }) => {
@@ -580,7 +612,7 @@
       document.getElementById('btn-play-pause').style.display = 'none';
       document.getElementById('btn-next').style.display = 'none';
       document.getElementById('btn-logout').style.display = 'none';
-      document.getElementById('stat-origin').textContent = 'GLOBE';
+      updateOriginLabel('ITALIA');
       document.getElementById('stat-hz').textContent = 'IDLE';
       document.getElementById('track-name').textContent = 'IN ATTESA DI SPOTIFY';
       document.getElementById('lyric-line-1').textContent = 'AETHER VIBE';
@@ -595,7 +627,6 @@
       document.getElementById('btn-play-pause').style.display = 'inline-flex';
       document.getElementById('btn-next').style.display = 'inline-flex';
       document.getElementById('btn-logout').style.display = 'inline-flex';
-      document.getElementById('stat-origin').textContent = 'SYNCING';
 
       setupWebPlaybackSdk();
       fetchCurrentPlayback();
@@ -799,11 +830,57 @@
         String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
     }, 1000);
 
-    // --- GLOBO 3D CON THREE.JS ---
+    function createWorldMapTexture() {
+      const c = document.createElement('canvas');
+      c.width = 1024;
+      c.height = 512;
+      const ctx = c.getContext('2d');
+
+      ctx.fillStyle = '#091020';
+      ctx.fillRect(0, 0, c.width, c.height);
+
+      ctx.strokeStyle = 'rgba(255, 175, 80, 0.14)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= c.width; x += 64) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, c.height); ctx.stroke();
+      }
+      for (let y = 0; y <= c.height; y += 64) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(c.width, y); ctx.stroke();
+      }
+
+      function drawRegion(points, fill = '#2b241d', stroke = '#ffaa44') {
+        ctx.beginPath();
+        points.forEach(([lat, lon], idx) => {
+          const x = ((lon + 180) / 360) * c.width;
+          const y = ((90 - lat) / 180) * c.height;
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+        ctx.fillStyle = fill;
+        ctx.fill();
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+      }
+
+      drawRegion([[68,-165],[70,-125],[60,-95],[48,-82],[31,-82],[18,-98],[25,-112],[45,-125],[58,-140]]);
+      drawRegion([[12,-74],[5,-52],[-5,-35],[-23,-42],[-42,-65],[-54,-68],[-40,-73],[-15,-76],[4,-77]]);
+      drawRegion([[70,10],[71,28],[60,30],[52,18],[44,18],[45,13],[40,18],[37,15],[41,12],[43,8],[46,2],[48,-4],[58,-5],[64,6]]);
+      drawRegion([[36,-8],[37,10],[31,32],[12,50],[-12,41],[-34,20],[-33,18],[-5,10],[5,-5],[15,-17]]);
+      drawRegion([[72,35],[73,100],[64,168],[50,142],[36,139],[23,114],[10,104],[22,88],[12,77],[26,56],[41,29],[55,38]]);
+      drawRegion([[-12,130],[-15,145],[-28,153],[-38,145],[-34,115],[-20,114]]);
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.needsUpdate = true;
+      return tex;
+    }
+
+    // --- GLOBO 3D SULLA FASCIA SINISTRA ---
     const globeContainer = document.getElementById('globe-container');
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0, 5.2);
+    camera.position.set(0, 0, 5.4);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -811,32 +888,28 @@
     globeContainer.appendChild(renderer.domElement);
 
     const globeGroup = new THREE.Group();
-    globeGroup.position.set(0.6, -0.45, 0);
+    globeGroup.position.set(-2.35, -0.35, -0.3);
+    globeGroup.scale.set(0.95, 0.95, 0.95);
     scene.add(globeGroup);
 
-    const ambientLight = new THREE.AmbientLight(0xffcc88, 0.85);
+    const ambientLight = new THREE.AmbientLight(0xffd7a8, 1.0);
     scene.add(ambientLight);
     const dirLight = new THREE.DirectionalLight(0xff9944, 1.4);
     dirLight.position.set(5, 3, 5);
     scene.add(dirLight);
 
+    const worldTexture = createWorldMapTexture();
     const earthGeo = new THREE.SphereGeometry(1.75, 48, 48);
     const earthMat = new THREE.MeshStandardMaterial({
-      color: 0x0c1222,
+      map: worldTexture,
       roughness: 0.65,
-      metalness: 0.25
+      metalness: 0.2
     });
     const earthMesh = new THREE.Mesh(earthGeo, earthMat);
     globeGroup.add(earthMesh);
 
-    const wireGeo = new THREE.WireframeGeometry(new THREE.SphereGeometry(1.756, 28, 20));
-    const wireMat = new THREE.LineBasicMaterial({ color: 0xffaa44, transparent: true, opacity: 0.22 });
-    const wireMesh = new THREE.LineSegments(wireGeo, wireMat);
-    globeGroup.add(wireMesh);
-
-    // Marker luminoso sulla coordinata target
-    const pinGeo = new THREE.SphereGeometry(0.055, 16, 16);
-    const pinMat = new THREE.MeshBasicMaterial({ color: 0xff6622 });
+    const pinGeo = new THREE.SphereGeometry(0.065, 16, 16);
+    const pinMat = new THREE.MeshBasicMaterial({ color: 0xff5500 });
     const pinMesh = new THREE.Mesh(pinGeo, pinMat);
     globeGroup.add(pinMesh);
 
@@ -850,7 +923,7 @@
       );
     }
 
-    // --- VISUALIZZATORE MENO STONDATO (OTTACONO / POLIGONO SFACCETTATO) ---
+    // --- VISUALIZZATORE TONDO SPOSTATO A DESTRA ---
     const visCanvas = document.getElementById('visualizer-canvas');
     const visCtx = visCanvas.getContext('2d');
     let width = window.innerWidth, height = window.innerHeight;
@@ -865,18 +938,6 @@
     }
     window.addEventListener('resize', resize);
     resize();
-
-    function traceAngularPolygon(ctx, cx, cy, radius, sides = 8) {
-      ctx.beginPath();
-      for (let i = 0; i < sides; i++) {
-        const angle = (i / sides) * Math.PI * 2 - Math.PI / sides;
-        const px = cx + Math.cos(angle) * radius;
-        const py = cy + Math.sin(angle) * radius;
-        if (i === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.closePath();
-    }
 
     function renderLoop(t) {
       const dt = Math.min(0.05, (t - lastFrameTime) * 0.001);
@@ -901,7 +962,6 @@
         ? Math.pow(Math.max(0, Math.sin(playbackState.beatPhase)), 3)
         : 0.15;
 
-      // Ruota il globo 3D verso targetLon / targetLat
       const desiredRotY = -((playbackState.targetLon + 90) * (Math.PI / 180));
       const desiredRotX = (playbackState.targetLat * (Math.PI / 180)) * 0.65;
       globeGroup.rotation.y += (desiredRotY - globeGroup.rotation.y) * Math.min(1, dt * 2.5);
@@ -909,38 +969,39 @@
 
       const pinPos = latLonToVector3(playbackState.targetLat, playbackState.targetLon, 1.77);
       pinMesh.position.copy(pinPos);
-      const pinScale = 1 + bassKick * 0.6 * playbackState.energy;
+      const pinScale = 1 + bassKick * 0.65 * playbackState.energy;
       pinMesh.scale.set(pinScale, pinScale, pinScale);
 
       renderer.render(scene, camera);
 
       visCtx.clearRect(0, 0, width, height);
 
-      const cx = width * 0.55, cy = height * 0.5;
+      const cx = width * 0.64, cy = height * 0.52;
       const pulse = bassKick * 9 * playbackState.energy;
       const r = Math.min(width, height) * 0.145 + pulse;
 
-      // Barre meno morbide: punte più nette e spessore deciso
-      const bars = 72;
+      const bars = 90;
       for (let i = 0; i < bars; i++) {
         const angle = (i / bars) * Math.PI * 2 + (playbackState.isPlaying ? songSec * 0.18 : 0);
         const harmonic = Math.abs(Math.sin(songSec * 6.5 + i * 0.35 + playbackState.beatPhase * 0.5));
         const lowFreqBoost = 0.65 + 0.35 * Math.cos(i * 0.2);
-        const barH = 4 + (harmonic * 28 * lowFreqBoost + bassKick * 18) * playbackState.energy;
+        const barH = 4 + (harmonic * 26 * lowFreqBoost + bassKick * 18) * playbackState.energy;
 
         visCtx.strokeStyle = `rgba(255, 210, 140, ${0.35 + 0.55 * playbackState.energy})`;
-        visCtx.lineWidth = 4;
-        visCtx.lineCap = 'square';
+        visCtx.lineWidth = 3;
+        visCtx.lineCap = 'round';
         visCtx.beginPath();
-        visCtx.moveTo(cx + Math.cos(angle) * (r + 5), cy + Math.sin(angle) * (r + 5));
-        visCtx.lineTo(cx + Math.cos(angle) * (r + 5 + barH), cy + Math.sin(angle) * (r + 5 + barH));
+        visCtx.moveTo(cx + Math.cos(angle) * (r + 4), cy + Math.sin(angle) * (r + 4));
+        visCtx.lineTo(cx + Math.cos(angle) * (r + 4 + barH), cy + Math.sin(angle) * (r + 4 + barH));
         visCtx.stroke();
       }
 
       const hasCover = Boolean(activeToken && coverImage.complete && coverImage.naturalWidth > 0 && coverImage.getAttribute('src'));
 
       visCtx.save();
-      traceAngularPolygon(visCtx, cx, cy, r, 8);
+      visCtx.beginPath();
+      visCtx.arc(cx, cy, r, 0, Math.PI * 2);
+      visCtx.closePath();
       visCtx.clip();
 
       if (hasCover) {
@@ -952,8 +1013,9 @@
       visCtx.restore();
 
       visCtx.strokeStyle = '#ffbb66';
-      visCtx.lineWidth = 3;
-      traceAngularPolygon(visCtx, cx, cy, r, 8);
+      visCtx.lineWidth = 2.5;
+      visCtx.beginPath();
+      visCtx.arc(cx, cy, r, 0, Math.PI * 2);
       visCtx.stroke();
 
       requestAnimationFrame(renderLoop);
