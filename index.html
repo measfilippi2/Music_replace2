@@ -82,12 +82,17 @@
     .playlist-item img, .track-item img { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; }
     .back-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
 
-    .taskbar {
-      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 20;
-      display: flex; align-items: center; gap: 8px; padding: 6px 14px;
-      background: rgba(14, 17, 26, 0.68); border: 1px solid var(--glass-border); border-radius: 14px;
-      backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75);
-    }
+   <div class="taskbar">
+      <button class="tb-btn" id="spotify-login-btn" style="background:#1db954; color:#000; border:none; font-weight:700;">🟢 Login Spotify</button>
+      <button class="tb-btn" id="btn-playlists" style="display:none;">📂 Playlist</button>
+      <button class="tb-btn" id="btn-prev" style="display:none;">⏮</button>
+      <button class="tb-btn" id="btn-play-pause" style="display:none;">⏯</button>
+      <button class="tb-btn" id="btn-next" style="display:none;">⏭</button>
+      <button class="tb-btn" id="btn-logout" style="display:none; color:#ff7777;">Esci</button>
+      <div class="tb-divider"></div>
+      <div class="track-pill" id="track-name">IN ATTESA DI SPOTIFY</div>
+    </div>
+    
     .tb-btn {
       appearance: none; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.05);
       color: #e8ecf5; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600;
@@ -150,11 +155,20 @@
       <div class="track-pill" id="track-name">IN ATTESA DI SPOTIFY</div>
     </div>
   </div>
-
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script>
-const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
+    const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
     const REDIRECT_URI = window.location.origin + window.location.pathname;
-    const SCOPES = 'user-read-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative user-library-read user-read-private';
+    const SCOPES = [
+      'streaming',
+      'user-read-playback-state',
+      'user-read-currently-playing',
+      'user-modify-playback-state',
+      'playlist-read-private',
+      'playlist-read-collaborative',
+      'user-library-read',
+      'user-read-private'
+    ].join(' ');
     const MAX_TRACKS = 500;
 
     const coverImage = new Image();
@@ -162,8 +176,11 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
 
     let activeToken = null;
     let pollInterval = null;
+    let spotifyPlayer = null;
+    let deviceId = null;
+    let sdkReadyResolve = null;
+    const sdkReadyPromise = new Promise(resolve => { sdkReadyResolve = resolve; });
 
-    // Stato riproduzione per sincronizzare il cerchio al tempo del brano
     let playbackState = {
       isPlaying: false,
       progressMs: 0,
@@ -171,6 +188,10 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
       lastSyncAt: performance.now(),
       beatPhase: 0,
       energy: 0.15
+    };
+
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      if (sdkReadyResolve) sdkReadyResolve();
     };
 
     function generateRandomString(length) {
@@ -278,6 +299,166 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
       return null;
     }
 
+    function applyTrackUi(track, isPlaying, positionMs) {
+      if (!track) return;
+      playbackState.isPlaying = Boolean(isPlaying);
+      playbackState.progressMs = Number(positionMs) || 0;
+      playbackState.durationMs = Number(track.duration_ms) || 180000;
+      playbackState.lastSyncAt = performance.now();
+
+      const artistName = (track.artists && track.artists[0]) ? track.artists[0].name : 'Artista sconosciuto';
+      document.getElementById('track-name').textContent = `${artistName} - ${track.name}`;
+      document.getElementById('lyric-line-1').textContent = track.name.toUpperCase();
+      document.getElementById('lyric-line-2').textContent = artistName.toUpperCase();
+      document.getElementById('stat-hz').textContent = playbackState.isPlaying ? 'IN RIPRODUZIONE' : 'IN PAUSA';
+      document.getElementById('btn-play-pause').textContent = playbackState.isPlaying ? '⏸' : '▶';
+
+      if (track.album && track.album.images && track.album.images.length > 0) {
+        const coverUrl = track.album.images[0].url;
+        if (coverImage.src !== coverUrl) {
+          coverImage.crossOrigin = 'anonymous';
+          coverImage.src = coverUrl;
+          document.getElementById('hud-thumb').src = coverUrl;
+        }
+      }
+    }
+
+    async function setupWebPlaybackSdk() {
+      await sdkReadyPromise;
+      if (!window.Spotify || !activeToken) return;
+
+      if (spotifyPlayer) {
+        spotifyPlayer.disconnect();
+        spotifyPlayer = null;
+      }
+
+      spotifyPlayer = new window.Spotify.Player({
+        name: 'Aether Vibe Web Player',
+        getOAuthToken: async cb => {
+          const fresh = await refreshSpotifyToken() || activeToken;
+          cb(fresh);
+        },
+        volume: 0.7
+      });
+
+      spotifyPlayer.addListener('ready', ({ device_id }) => {
+        deviceId = device_id;
+        document.getElementById('stat-source').textContent = 'WEB PLAYER READY';
+      });
+
+      spotifyPlayer.addListener('not_ready', ({ device_id }) => {
+        if (deviceId === device_id) deviceId = null;
+      });
+
+      spotifyPlayer.addListener('player_state_changed', state => {
+        if (!state) return;
+        const currentTrack = state.track_window && state.track_window.current_track;
+        if (currentTrack) {
+          applyTrackUi(currentTrack, !state.paused, state.position);
+        }
+      });
+
+      spotifyPlayer.addListener('initialization_error', ({ message }) => {
+        console.error('SDK init error:', message);
+      });
+
+      spotifyPlayer.addListener('authentication_error', ({ message }) => {
+        console.error('SDK auth error:', message);
+      });
+
+      spotifyPlayer.addListener('account_error', ({ message }) => {
+        console.error('SDK account error (serve Premium per audio web):', message);
+        document.getElementById('track-name').textContent = 'AUDIO SDK: SERVE PREMIUM';
+      });
+
+      await spotifyPlayer.connect();
+    }
+
+    async function ensureActiveWebDevice() {
+      if (!deviceId || !activeToken) return;
+      await fetch('https://api.spotify.com/v1/me/player', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${activeToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ device_ids: [deviceId], play: false })
+      });
+    }
+
+    async function playPlaylistTrack(playlistUri, trackIndex) {
+      if (!activeToken) return;
+      if (spotifyPlayer && spotifyPlayer.activateElement) {
+        await spotifyPlayer.activateElement();
+      }
+      if (deviceId) {
+        await ensureActiveWebDevice();
+      }
+
+      const query = deviceId ? `?device_id=${encodeURIComponent(deviceId)}` : '';
+      const res = await fetch(`https://api.spotify.com/v1/me/player/play${query}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${activeToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          context_uri: playlistUri,
+          offset: { position: trackIndex },
+          position_ms: 0
+        })
+      });
+
+      if (res.status === 403) {
+        document.getElementById('track-name').textContent = 'RIPRODUZIONE: SERVE PREMIUM';
+      } else {
+        setTimeout(fetchCurrentPlayback, 400);
+      }
+    }
+
+    document.getElementById('btn-play-pause').addEventListener('click', async () => {
+      if (spotifyPlayer && deviceId) {
+        if (spotifyPlayer.activateElement) await spotifyPlayer.activateElement();
+        await spotifyPlayer.togglePlay();
+        return;
+      }
+      if (!activeToken) return;
+      const endpoint = playbackState.isPlaying
+        ? 'https://api.spotify.com/v1/me/player/pause'
+        : 'https://api.spotify.com/v1/me/player/play';
+      await fetch(endpoint, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${activeToken}` }
+      });
+      setTimeout(fetchCurrentPlayback, 350);
+    });
+
+    document.getElementById('btn-next').addEventListener('click', async () => {
+      if (spotifyPlayer && deviceId) {
+        await spotifyPlayer.nextTrack();
+        return;
+      }
+      if (!activeToken) return;
+      await fetch('https://api.spotify.com/v1/me/player/next', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${activeToken}` }
+      });
+      setTimeout(fetchCurrentPlayback, 400);
+    });
+
+    document.getElementById('btn-prev').addEventListener('click', async () => {
+      if (spotifyPlayer && deviceId) {
+        await spotifyPlayer.previousTrack();
+        return;
+      }
+      if (!activeToken) return;
+      await fetch('https://api.spotify.com/v1/me/player/previous', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${activeToken}` }
+      });
+      setTimeout(fetchCurrentPlayback, 400);
+    });
+
     function clearAllImages() {
       coverImage.onload = null;
       coverImage.src = '';
@@ -297,6 +478,11 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
 
     function resetUiToLoggedOut() {
       activeToken = null;
+      deviceId = null;
+      if (spotifyPlayer) {
+        spotifyPlayer.disconnect();
+        spotifyPlayer = null;
+      }
       if (pollInterval) {
         clearInterval(pollInterval);
         pollInterval = null;
@@ -313,6 +499,9 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
       document.getElementById('spotify-list-container').innerHTML = '';
       document.getElementById('spotify-login-btn').style.display = 'inline-flex';
       document.getElementById('btn-playlists').style.display = 'none';
+      document.getElementById('btn-prev').style.display = 'none';
+      document.getElementById('btn-play-pause').style.display = 'none';
+      document.getElementById('btn-next').style.display = 'none';
       document.getElementById('btn-logout').style.display = 'none';
       document.getElementById('stat-source').textContent = 'READY';
       document.getElementById('stat-hz').textContent = 'IDLE';
@@ -325,9 +514,13 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
       activeToken = token;
       document.getElementById('spotify-login-btn').style.display = 'none';
       document.getElementById('btn-playlists').style.display = 'inline-flex';
+      document.getElementById('btn-prev').style.display = 'inline-flex';
+      document.getElementById('btn-play-pause').style.display = 'inline-flex';
+      document.getElementById('btn-next').style.display = 'inline-flex';
       document.getElementById('btn-logout').style.display = 'inline-flex';
       document.getElementById('stat-source').textContent = 'SPOTIFY API';
 
+      setupWebPlaybackSdk();
       fetchCurrentPlayback();
       if (pollInterval) clearInterval(pollInterval);
       pollInterval = setInterval(fetchCurrentPlayback, 2500);
@@ -359,32 +552,14 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
         if (res.status === 204) {
           playbackState.isPlaying = false;
           document.getElementById('stat-hz').textContent = 'PAUSA / NESSUN BRANO';
+          document.getElementById('btn-play-pause').textContent = '▶';
           return;
         }
 
         if (res.status === 200) {
           const data = await res.json();
-          playbackState.isPlaying = Boolean(data && data.is_playing);
-          playbackState.progressMs = Number(data && data.progress_ms) || 0;
-          playbackState.lastSyncAt = performance.now();
-
           if (data && data.item) {
-            const track = data.item;
-            playbackState.durationMs = Number(track.duration_ms) || 180000;
-
-            document.getElementById('track-name').textContent = `${track.artists[0].name} - ${track.name}`;
-            document.getElementById('lyric-line-1').textContent = track.name.toUpperCase();
-            document.getElementById('lyric-line-2').textContent = track.artists[0].name.toUpperCase();
-            document.getElementById('stat-hz').textContent = playbackState.isPlaying ? 'IN RIPRODUZIONE' : 'IN PAUSA';
-
-            if (track.album && track.album.images && track.album.images.length > 0) {
-              const coverUrl = track.album.images[0].url;
-              if (coverImage.src !== coverUrl) {
-                coverImage.crossOrigin = 'anonymous';
-                coverImage.src = coverUrl;
-                document.getElementById('hud-thumb').src = coverUrl;
-              }
-            }
+            applyTrackUi(data.item, data.is_playing, data.progress_ms);
           } else {
             playbackState.isPlaying = false;
             document.getElementById('stat-hz').textContent = 'PAUSA / NESSUN BRANO';
@@ -437,7 +612,7 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
             const div = document.createElement('div');
             div.className = 'playlist-item';
             div.innerHTML = `<img src="${img}" /><div><strong>${pl.name}</strong><br><span style="color:#aaa;">Apri playlist</span></div>`;
-            div.onclick = () => loadPlaylistTracks(pl.id, pl.name);
+            div.onclick = () => loadPlaylistTracks(pl.id, pl.name, pl.uri);
             container.appendChild(div);
           });
         } else {
@@ -449,8 +624,9 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
       }
     }
 
-    async function loadPlaylistTracks(playlistId, playlistName) {
+    async function loadPlaylistTracks(playlistId, playlistName, playlistUri) {
       if (!activeToken) return;
+      const resolvedPlaylistUri = playlistUri || `spotify:playlist:${playlistId}`;
       document.getElementById('panel-title').textContent = playlistName;
       document.getElementById('back-to-playlists').style.display = 'inline-block';
       const container = document.getElementById('spotify-list-container');
@@ -491,10 +667,11 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
         container.innerHTML = '';
         let loadedCount = 0;
 
-        allItems.forEach(entry => {
+        allItems.forEach((entry, idx) => {
           const track = (entry && (entry.item || entry.track)) || entry;
           if (!track || !track.name) return;
 
+          const trackIndex = idx;
           loadedCount++;
           const trackName = track.name;
           const artistNames = track.artists ? track.artists.map(a => a.name).join(', ') : 'Artista sconosciuto';
@@ -505,6 +682,7 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
           const div = document.createElement('div');
           div.className = 'track-item';
           div.innerHTML = `<img src="${img}" style="background:#222;" /><div><strong>${trackName}</strong><br><span style="color:#aaa;">${artistNames}</span></div>`;
+          div.onclick = () => playPlaylistTrack(resolvedPlaylistUri, trackIndex);
           container.appendChild(div);
         });
 
@@ -561,7 +739,6 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
       const dt = Math.min(0.05, (t - lastFrameTime) * 0.001);
       lastFrameTime = t;
 
-      // Calcola posizione attuale del brano in ms se in riproduzione
       let currentPosMs = playbackState.progressMs;
       if (playbackState.isPlaying) {
         currentPosMs += (t - playbackState.lastSyncAt);
@@ -570,11 +747,9 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
         }
       }
 
-      // Energia fluida: attiva solo quando il brano sta suonando
       const targetEnergy = playbackState.isPlaying ? 1.0 : 0.06;
       playbackState.energy += (targetEnergy - playbackState.energy) * Math.min(1, dt * 8);
 
-      // Avanzamento fase ritmo sincronizzato al tempo del brano (~120 BPM base modulato dal progresso)
       const tempoHz = playbackState.isPlaying ? 2.0 : 0.35;
       playbackState.beatPhase += dt * tempoHz * Math.PI * 2;
 
@@ -604,7 +779,6 @@ const CLIENT_ID = 'fec6822870564007844726da9d4d0a22';
       const bars = 90;
       for (let i = 0; i < bars; i++) {
         const angle = (i / bars) * Math.PI * 2 + (playbackState.isPlaying ? songSec * 0.18 : 0);
-        // Enfatizza le frequenze basse intorno agli angoli principali + onda sincronizzata al brano
         const harmonic = Math.abs(Math.sin(songSec * 6.5 + i * 0.35 + playbackState.beatPhase * 0.5));
         const lowFreqBoost = 0.65 + 0.35 * Math.cos(i * 0.2);
         const barH = 4 + (harmonic * 26 * lowFreqBoost + bassKick * 18) * playbackState.energy;
