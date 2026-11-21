@@ -402,34 +402,43 @@
       document.getElementById('panel-title').textContent = playlistName;
       document.getElementById('back-to-playlists').style.display = 'inline-block';
       const container = document.getElementById('spotify-list-container');
-      container.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">Caricamento brani...</div>';
+      container.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">Caricamento di tutti i brani...</div>';
 
       try {
-        const endpoint = `https://api.spotify.com/v1/playlists/${playlistId}/items?limit=50&market=from_token`;
-        let res = await fetch(endpoint, {
-          headers: { 'Authorization': `Bearer ${activeToken}` }
-        });
+        let nextUrl = `https://api.spotify.com/v1/playlists/${playlistId}/items?limit=50&market=from_token`;
+        let allItems = [];
 
-        if (res.status === 401) {
-          activeToken = await refreshSpotifyToken();
-          if (!activeToken) return;
-          res = await fetch(endpoint, {
+        while (nextUrl) {
+          let res = await fetch(nextUrl, {
             headers: { 'Authorization': `Bearer ${activeToken}` }
           });
+
+          if (res.status === 401) {
+            activeToken = await refreshSpotifyToken();
+            if (!activeToken) return;
+            res = await fetch(nextUrl, {
+              headers: { 'Authorization': `Bearer ${activeToken}` }
+            });
+          }
+
+          const data = await res.json();
+
+          if (data.error) {
+            container.innerHTML = `<div style="color:#ff7777; padding:10px; text-align:center;">Errore (${data.error.status}): ${data.error.message}</div>`;
+            return;
+          }
+
+          if (data.items && data.items.length > 0) {
+            allItems = allItems.concat(data.items);
+          }
+
+          nextUrl = data.next;
         }
 
-        const data = await res.json();
         container.innerHTML = '';
-
-        if (data.error) {
-          container.innerHTML = `<div style="color:#ff7777; padding:10px; text-align:center;">Errore (${data.error.status}): ${data.error.message}</div>`;
-          return;
-        }
-
-        const items = data.items || [];
         let loadedCount = 0;
 
-        items.forEach(entry => {
+        allItems.forEach(entry => {
           const track = (entry && (entry.item || entry.track)) || entry;
           if (!track || !track.name) return;
 
@@ -446,6 +455,8 @@
           container.appendChild(div);
         });
 
+        document.getElementById('panel-title').textContent = `${playlistName} (${loadedCount})`;
+
         if (loadedCount === 0) {
           container.innerHTML = '<div style="color:#aaa; padding:10px; text-align:center;">Nessun brano trovato nella playlist.</div>';
         }
@@ -454,7 +465,7 @@
         container.innerHTML = '<div style="color:#ff7777; padding:10px; text-align:center;">Errore di caricamento tracce.</div>';
       }
     }
-
+    
     document.getElementById('back-to-playlists').addEventListener('click', loadUserPlaylists);
 
     const urlParams = new URLSearchParams(window.location.search);
