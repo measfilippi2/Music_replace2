@@ -2111,6 +2111,20 @@
           extractPaletteFromCover(coverImage);
         }
       }
+
+      const totalEl = document.getElementById('time-total');
+      const elapsedEl = document.getElementById('time-elapsed');
+      const sliderEl = document.getElementById('seek-slider');
+      const fmt = (ms) => {
+        const s = Math.max(0, Math.floor((Number(ms) || 0) / 1000));
+        return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+      };
+      if (totalEl) totalEl.textContent = fmt(playbackState.durationMs);
+      if (elapsedEl) elapsedEl.textContent = fmt(playbackState.progressMs);
+      if (sliderEl) {
+        sliderEl.max = Math.max(1000, playbackState.durationMs);
+        sliderEl.value = Math.min(Number(sliderEl.max), playbackState.progressMs);
+      }
     }
 
     async function setupWebPlaybackSdk() {
@@ -2277,6 +2291,12 @@
       document.getElementById('btn-play-pause').style.display = 'none';
       document.getElementById('btn-next').style.display = 'none';
       document.getElementById('btn-logout').style.display = 'none';
+
+      const seekWrapEl = document.getElementById('seek-wrap');
+      const volumeWrapEl = document.getElementById('volume-wrap');
+      if (seekWrapEl) seekWrapEl.style.display = 'none';
+      if (volumeWrapEl) volumeWrapEl.style.display = 'none';
+      
       restoreOriginCallout('ITALIA');
       updateOriginLabel('ITALIA');
       document.getElementById('stat-hz').textContent = 'IDLE';
@@ -2293,6 +2313,12 @@
       document.getElementById('btn-play-pause').style.display = 'inline-flex';
       document.getElementById('btn-next').style.display = 'inline-flex';
       document.getElementById('btn-logout').style.display = 'inline-flex';
+      
+      const seekWrapEl = document.getElementById('seek-wrap');
+      const volumeWrapEl = document.getElementById('volume-wrap');
+      if (seekWrapEl) seekWrapEl.style.display = 'inline-flex';
+      if (volumeWrapEl) volumeWrapEl.style.display = 'inline-flex';
+      
       const panel = document.getElementById('spotify-panel');
       if (!panel.classList.contains('open')) {
         panel.classList.add('open');
