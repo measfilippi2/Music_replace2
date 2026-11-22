@@ -3134,6 +3134,238 @@
     };
 
     setInterval(syncSeekUi, 250);
+
+    // --- TOAST AVVISI NON INVASIVI ---
+    const toastTimers = new Map();
+    function showToast(message, type = 'info', ttlMs = 3800) {
+      let stack = document.getElementById('toast-stack');
+      if (!stack) {
+        const viewport = document.getElementById('viewport') || document.body;
+        stack = document.createElement('div');
+        stack.id = 'toast-stack';
+        stack.setAttribute('aria-live', 'polite');
+        viewport.appendChild(stack);
+      }
+
+      const key = `${type}:${message}`;
+      if (toastTimers.has(key)) return;
+
+      const el = document.createElement('div');
+      el.className = `toast-item ${type}`;
+
+      const msgSpan = document.createElement('span');
+      msgSpan.textContent = message;
+
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'toast-close';
+      closeBtn.textContent = '✕';
+      closeBtn.setAttribute('aria-label', 'Chiudi avviso');
+
+      const removeToast = () => {
+        if (el.parentNode) el.parentNode.removeChild(el);
+        toastTimers.delete(key);
+      };
+
+      closeBtn.addEventListener('click', removeToast);
+      el.append(msgSpan, closeBtn);
+      stack.appendChild(el);
+
+      const timer = setTimeout(removeToast, ttlMs);
+      toastTimers.set(key, timer);
+    }
+
+    // --- MODALITÀ NOTTURNA / LOW-POWER ---
+    let nightMode = localStorage.getItem('aether_night_mode') === '1';
+
+    function applyNightMode(enabled) {
+      nightMode = Boolean(enabled);
+      localStorage.setItem('aether_night_mode', nightMode ? '1' : '0');
+      document.body.classList.toggle('night-mode', nightMode);
+      document.documentElement.style.setProperty('--neon-intensity', nightMode ? '0.35' : '1');
+
+      const btn = document.getElementById('btn-night');
+      if (btn) {
+        btn.classList.toggle('active-mode', nightMode);
+        btn.textContent = nightMode ? '🌘 Eco' : '🌙 Notte';
+      }
+
+      if (typeof renderer !== 'undefined' && renderer && typeof isMobileViewport === 'function') {
+        renderer.setPixelRatio(
+          Math.min(window.devicePixelRatio, nightMode ? 1.15 : (isMobileViewport() ? 1.75 : 2))
+        );
+      }
+
+      if (
+        typeof initGalaxyStars === 'function' &&
+        typeof width !== 'undefined' &&
+        typeof height !== 'undefined' &&
+        width &&
+        height
+      ) {
+        initGalaxyStars(width, height);
+      }
+    }
+
+    // --- COLLEGAMENTO UNIFICATO CONTROLLI ---
+    (function wireAllNewControls() {
+      if (!document.getElementById('toast-stack')) {
+        const viewport = document.getElementById('viewport') || document.body;
+        const stack = document.createElement('div');
+        stack.id = 'toast-stack';
+        stack.setAttribute('aria-live', 'polite');
+        viewport.appendChild(stack);
+      }
+
+      const btnGlobe = document.getElementById('btn-mode-globe');
+      const btnSpace = document.getElementById('btn-mode-space');
+      const originCallout = document.querySelector('.origin-callout');
+
+      function markModeButton(activeId) {
+        [btnGlobe, btnSpace].forEach(b => {
+          if (!b) return;
+          b.classList.toggle('active-mode', b.id === activeId);
+        });
+      }
+
+      if (btnGlobe) {
+        btnGlobe.onclick = () => {
+          try {
+            if (typeof isThasupSpaceActive !== 'undefined' && isThasupSpaceActive && typeof exitThasupSpace === 'function') {
+              isThasupSpaceActive = false;
+              exitThasupSpace();
+            }
+            if (originCallout) {
+              originCallout.classList.remove('hidden-space', 'thasup-mode');
+            }
+            if (typeof restoreOriginCallout === 'function') {
+              restoreOriginCallout(document.getElementById('stat-origin')?.textContent || 'ITALIA');
+            }
+          } catch (err) {
+            console.warn('Errore passaggio a Globo:', err);
+          }
+          markModeButton('btn-mode-globe');
+          showToast('Modalità Globo attiva', 'info', 2200);
+        };
+      }
+
+      if (btnSpace) {
+        btnSpace.onclick = () => {
+          try {
+            if (originCallout) {
+              originCallout.classList.add('hidden-space', 'thasup-mode');
+            }
+            if (typeof handleTrackSpaceTransition === 'function') {
+              handleTrackSpaceTransition({ name: 'tha.Supreme Space', artists: [{ name: 'tha.Supreme' }] });
+            }
+          } catch (err) {
+            console.warn('Errore passaggio a Spazio:', err);
+          }
+          markModeButton('btn-mode-space');
+          showToast('Modalità Spazio attiva', 'info', 2200);
+        };
+      }
+
+      const btnNight = document.getElementById('btn-night');
+      if (btnNight) {
+        btnNight.onclick = () => {
+          const nextState = !nightMode;
+          applyNightMode(nextState);
+          showToast(nextState ? 'Modalità Notte / Eco attiva' : 'Modalità standard attiva', 'info', 2200);
+        };
+        applyNightMode(nightMode);
+      }
+
+      const seekSlider = document.getElementById('seek-slider');
+      const volumeSlider = document.getElementById('volume-slider');
+      const timeElapsedEl = document.getElementById('time-elapsed');
+      const timeTotalEl = document.getElementById('time-total');
+
+      const fmtMs = (ms) => {
+        const s = Math.max(0, Math.floor((Number(ms) || 0) / 1000));
+        return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+      };
+
+      if (seekSlider) {
+        const applySeek = async () => {
+          const targetMs = Math.max(0, Number(seekSlider.value) || 0);
+          if (timeElapsedEl) timeElapsedEl.textContent = fmtMs(targetMs);
+          if (typeof playbackState !== 'undefined') {
+            playbackState.progressMs = targetMs;
+            playbackState.lastSyncAt = performance.now();
+          }
+          try {
+            if (typeof spotifyPlayer !== 'undefined' && spotifyPlayer && typeof deviceId !== 'undefined' && deviceId) {
+              await spotifyPlayer.seek(targetMs);
+              return;
+            }
+            if (typeof activeToken !== 'undefined' && activeToken) {
+              await fetch(`https://api.spotify.com/v1/me/player/seek?position_ms=${targetMs}`, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${activeToken}` }
+              });
+              if (typeof fetchCurrentPlayback === 'function') {
+                setTimeout(fetchCurrentPlayback, 350);
+              }
+            }
+          } catch (err) {
+            console.warn('Errore seek:', err);
+          }
+        };
+
+        seekSlider.oninput = () => {
+          if (timeElapsedEl) timeElapsedEl.textContent = fmtMs(seekSlider.value);
+        };
+        seekSlider.onchange = applySeek;
+      }
+
+      if (volumeSlider) {
+        volumeSlider.onchange = async () => {
+          const volPct = Math.max(0, Math.min(100, Number(volumeSlider.value) || 0));
+          try {
+            if (typeof spotifyPlayer !== 'undefined' && spotifyPlayer && typeof deviceId !== 'undefined' && deviceId) {
+              await spotifyPlayer.setVolume(volPct / 100);
+              return;
+            }
+            if (typeof activeToken !== 'undefined' && activeToken) {
+              await fetch(`https://api.spotify.com/v1/me/player/volume?volume_percent=${volPct}`, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${activeToken}` }
+              });
+            }
+          } catch (err) {
+            console.warn('Errore volume:', err);
+          }
+        };
+      }
+
+      setInterval(() => {
+        const seekWrap = document.getElementById('seek-wrap');
+        const volumeWrap = document.getElementById('volume-wrap');
+        const trackPill = document.getElementById('track-name');
+        const hasSession = Boolean(
+          (typeof activeToken !== 'undefined' && activeToken) ||
+          (trackPill && trackPill.textContent && !/IN ATTESA/i.test(trackPill.textContent))
+        );
+        const disp = hasSession ? 'inline-flex' : 'none';
+        if (seekWrap && seekWrap.style.display !== disp) seekWrap.style.display = disp;
+        if (volumeWrap && volumeWrap.style.display !== disp) volumeWrap.style.display = disp;
+
+        if (seekSlider && typeof playbackState !== 'undefined') {
+          const dur = Number(playbackState.durationMs) || 0;
+          let cur = Number(playbackState.progressMs) || 0;
+          if (playbackState.isPlaying && playbackState.lastSyncAt) {
+            cur = Math.min(dur || cur + 250, cur + (performance.now() - playbackState.lastSyncAt));
+          }
+          if (document.activeElement !== seekSlider && dur > 0) {
+            seekSlider.max = dur;
+            seekSlider.value = Math.min(dur, Math.max(0, cur));
+            if (timeElapsedEl) timeElapsedEl.textContent = fmtMs(cur);
+            if (timeTotalEl) timeTotalEl.textContent = fmtMs(dur);
+          }
+        }
+      }, 250);
+    })();
+    
     
   </script>
   <script type="module">
