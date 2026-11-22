@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,600;0,700;1,700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
+ <style>
     :root {
       --bg-deep: #040508;
       --accent-rgb: 255, 170, 68;
@@ -75,7 +75,6 @@
       color: rgba(255, 255, 255, 0.88);
       text-shadow: 0 0 12px var(--accent-glow);
     }
-    /* Etichetta "stato di provenienza" posizionata sul lato destro del globo */
     .origin-callout {
       position: absolute;
       top: 30%;
@@ -128,7 +127,6 @@
       color: #ffffff;
       text-shadow: 0 0 10px var(--accent-soft);
     }
-    /* Blocco in alto a destra: Titolo canzone e info */
     .lyric-container {
       position: absolute;
       top: calc(42px + var(--safe-top));
@@ -173,7 +171,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    /* Blocco in basso a destra: ORIGIN / STATUS */
     .hud-widget {
       position: absolute;
       bottom: 64px;
@@ -203,7 +200,11 @@
     .hud-dial-core img { width: 100%; height: 100%; object-fit: cover; }
     .hud-stats { font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; line-height: 1.5; color: rgba(240, 244, 255, 0.92); overflow: hidden; }
     .hud-stats .tag { color: var(--accent-main); font-weight: 700; margin-right: 6px; }
-    /* Pannello playlist al centro-destra */
+    .hud-visits {
+      margin-top: 2px;
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.72);
+    }
     .spotify-panel {
       position: absolute;
       top: calc(158px + var(--safe-top));
@@ -234,7 +235,6 @@
     .playlist-item:hover, .track-item:hover, .playlist-item:active, .track-item:active { background: rgba(var(--accent-rgb), 0.22); }
     .playlist-item img, .track-item img { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
     .back-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
-    /* Comandi di riproduzione in basso al centro */
     .taskbar {
       position: absolute;
       bottom: calc(14px + var(--safe-bottom));
@@ -262,8 +262,41 @@
     .tb-btn:hover, .tb-btn:active { background: rgba(var(--accent-rgb), 0.25); border-color: var(--accent-main); }
     .tb-divider { width: 1px; height: 20px; background: rgba(255, 255, 255, 0.16); margin: 0 2px; flex-shrink: 0; }
     .track-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: rgba(255, 255, 255, 0.88); max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .seek-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      color: rgba(255, 255, 255, 0.85);
+      flex-shrink: 0;
+    }
+    .tb-range {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      outline: none;
+      cursor: pointer;
+    }
+    .tb-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: rgb(var(--accent-rgb));
+      box-shadow: 0 0 8px var(--accent-glow);
+      cursor: pointer;
+    }
+    #seek-slider {
+      width: 84px;
+    }
+    #volume-slider {
+      width: 62px;
+    }
 
-    /* --- ADATTAMENTO SMARTPHONE (PORTRAIT & LANDSCAPE) --- */
     @media (max-width: 768px) {
       #viewport {
         box-shadow: inset 0 0 42px rgba(var(--accent-rgb), 0.22), inset 0 0 14px rgba(var(--accent-secondary-rgb), 0.36);
@@ -340,6 +373,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
+      .hud-visits {
+        font-size: 0.62rem;
+      }
       .spotify-panel {
         top: calc(108px + var(--safe-top));
         left: calc(12px + var(--safe-left));
@@ -380,7 +416,12 @@
         padding: 6px 8px;
         gap: 5px;
         border-radius: 12px;
-        justify-content: space-between;
+        justify-content: flex-start;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .taskbar::-webkit-scrollbar {
+        display: none;
       }
       .tb-btn {
         min-height: 38px;
@@ -394,10 +435,20 @@
         margin: 0;
       }
       .track-pill {
-        flex: 1 1 auto;
-        min-width: 0;
+        flex: 0 1 95px;
+        min-width: 55px;
         max-width: none;
         font-size: 0.66rem;
+      }
+      .seek-wrap {
+        gap: 4px;
+        font-size: 0.6rem;
+      }
+      #seek-slider {
+        width: 54px;
+      }
+      #volume-slider {
+        display: none;
       }
     }
 
@@ -406,9 +457,7 @@
         padding: 6px 6px;
         font-size: 0.66rem;
       }
-      .track-pill {
-        display: none;
-      }
+      .track-pill,
       .tb-divider {
         display: none;
       }
@@ -485,7 +534,7 @@
         font-size: 0.7rem;
       }
     }
-  </style>
+</style>
 </head>
 <body>
   <div id="viewport">
@@ -536,6 +585,7 @@
       <div class="hud-stats">
         <div><span class="tag">ORIGIN</span><span id="stat-origin">ITALIA</span></div>
         <div><span class="tag">STATUS</span><span id="stat-hz">IDLE</span></div>
+        <div class="hud-visits"><span class="tag">VISITS</span><span id="visits-count">--</span></div>
       </div>
     </div>
     <!-- In basso al centro: Comandi di riproduzione -->
@@ -545,6 +595,15 @@
       <button class="tb-btn" id="btn-prev" style="display:none;">⏮</button>
       <button class="tb-btn" id="btn-play-pause" style="display:none;">⏯</button>
       <button class="tb-btn" id="btn-next" style="display:none;">⏭</button>
+      <div class="seek-wrap" id="seek-wrap" style="display:none;">
+        <span id="time-elapsed">0:00</span>
+        <input type="range" class="tb-range" id="seek-slider" min="0" max="100" value="0" step="1" title="Posizione brano" />
+        <span id="time-total">0:00</span>
+      </div>
+      <div class="seek-wrap" id="volume-wrap" style="display:none;" title="Volume">
+        <span>🔊</span>
+        <input type="range" class="tb-range" id="volume-slider" min="0" max="100" value="70" step="1" />
+      </div>
       <button class="tb-btn" id="btn-logout" style="display:none; color:#ff7777;">Esci</button>
       <div class="tb-divider"></div>
       <div class="track-pill" id="track-name">IN ATTESA DI SPOTIFY</div>
@@ -2845,6 +2904,103 @@
       requestAnimationFrame(renderLoop);
     }
     requestAnimationFrame(renderLoop);
+    
+    const seekWrap = document.getElementById('seek-wrap');
+    const volumeWrap = document.getElementById('volume-wrap');
+    const seekSlider = document.getElementById('seek-slider');
+    const volumeSlider = document.getElementById('volume-slider');
+    const timeElapsedEl = document.getElementById('time-elapsed');
+    const timeTotalEl = document.getElementById('time-total');
+    let isSeeking = false;
+
+    function formatMs(ms) {
+      const safe = Math.max(0, Math.floor((Number(ms) || 0) / 1000));
+      const min = Math.floor(safe / 60);
+      const sec = safe % 60;
+      return `${min}:${String(sec).padStart(2, '0')}`;
+    }
+
+    function setMediaControlsVisible(visible) {
+      const displayVal = visible ? 'inline-flex' : 'none';
+      if (seekWrap) seekWrap.style.display = displayVal;
+      if (volumeWrap) volumeWrap.style.display = displayVal;
+    }
+
+    function syncSeekUi() {
+      if (!activeToken || !seekSlider) return;
+      const dur = playbackState.durationMs || 0;
+      let cur = playbackState.progressMs || 0;
+      if (playbackState.isPlaying && !isSeeking) {
+        cur = Math.min(dur || cur + 250, cur + (performance.now() - playbackState.lastSyncAt));
+      }
+      if (!isSeeking) {
+        seekSlider.max = Math.max(1000, dur);
+        seekSlider.value = Math.min(Number(seekSlider.max), cur);
+        if (timeElapsedEl) timeElapsedEl.textContent = formatMs(cur);
+      }
+      if (timeTotalEl) timeTotalEl.textContent = formatMs(dur);
+    }
+
+    seekSlider?.addEventListener('pointerdown', () => { isSeeking = true; });
+    seekSlider?.addEventListener('touchstart', () => { isSeeking = true; }, { passive: true });
+    seekSlider?.addEventListener('input', () => {
+      if (timeElapsedEl) timeElapsedEl.textContent = formatMs(seekSlider.value);
+    });
+
+    async function commitSeek() {
+      if (!seekSlider) return;
+      const targetMs = Number(seekSlider.value) || 0;
+      isSeeking = false;
+      playbackState.progressMs = targetMs;
+      playbackState.lastSyncAt = performance.now();
+      syncSeekUi();
+      if (spotifyPlayer && deviceId) {
+        await spotifyPlayer.seek(targetMs);
+        return;
+      }
+      if (!activeToken) return;
+      await fetch(`https://api.spotify.com/v1/me/player/seek?position_ms=${targetMs}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${activeToken}` }
+      });
+      setTimeout(fetchCurrentPlayback, 350);
+    }
+
+    seekSlider?.addEventListener('change', commitSeek);
+    seekSlider?.addEventListener('pointerup', commitSeek);
+    seekSlider?.addEventListener('touchend', commitSeek);
+
+    volumeSlider?.addEventListener('change', async () => {
+      const volPct = Math.max(0, Math.min(100, Number(volumeSlider.value) || 0));
+      if (spotifyPlayer && deviceId) {
+        await spotifyPlayer.setVolume(volPct / 100);
+        return;
+      }
+      if (!activeToken) return;
+      await fetch(`https://api.spotify.com/v1/me/player/volume?volume_percent=${volPct}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${activeToken}` }
+      });
+    });
+
+    const _origInitSession = initSpotifySession;
+    initSpotifySession = function(token) {
+      setMediaControlsVisible(true);
+      _origInitSession(token);
+      syncSeekUi();
+    };
+
+    const _origResetUi = resetUiToLoggedOut;
+    resetUiToLoggedOut = function() {
+      setMediaControlsVisible(false);
+      if (seekSlider) { seekSlider.value = 0; seekSlider.max = 100; }
+      if (timeElapsedEl) timeElapsedEl.textContent = '0:00';
+      if (timeTotalEl) timeTotalEl.textContent = '0:00';
+      _origResetUi();
+    };
+
+    setInterval(syncSeekUi, 250);
+    
   </script>
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
