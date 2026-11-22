@@ -630,6 +630,56 @@
     let dynamicAccentRgb = [...DEFAULT_ACCENT_RGB];
     let dynamicSecondaryRgb = [...DEFAULT_SECONDARY_RGB];
 
+    // --- TOAST AVVISI NON INVASIVI ---
+    const toastTimers = new Map();
+    function showToast(message, type = 'info', ttlMs = 3800) {
+      const stack = document.getElementById('toast-stack');
+      if (!stack) return;
+      const key = `${type}:${message}`;
+      if (toastTimers.has(key)) return;
+
+      const el = document.createElement('div');
+      el.className = `toast-item ${type}`;
+      const msgSpan = document.createElement('span');
+      msgSpan.textContent = message;
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'toast-close';
+      closeBtn.textContent = '✕';
+      closeBtn.setAttribute('aria-label', 'Chiudi avviso');
+
+      const removeToast = () => {
+        if (el.parentNode) el.parentNode.removeChild(el);
+        toastTimers.delete(key);
+      };
+      closeBtn.addEventListener('click', removeToast);
+      el.append(msgSpan, closeBtn);
+      stack.appendChild(el);
+
+      const timer = setTimeout(removeToast, ttlMs);
+      toastTimers.set(key, timer);
+    }
+
+    // --- MODALITÀ NOTTURNA / LOW-POWER ---
+
+    let nightMode = localStorage.getItem('aether_night_mode') === '1';
+    function applyNightMode(enabled) {
+      nightMode = Boolean(enabled);
+      localStorage.setItem('aether_night_mode', nightMode ? '1' : '0');
+      document.body.classList.toggle('night-mode', nightMode);
+      document.documentElement.style.setProperty('--neon-intensity', nightMode ? '0.35' : '1');
+      const btn = document.getElementById('btn-night');
+      if (btn) {
+        btn.classList.toggle('active-mode', nightMode);
+        btn.textContent = nightMode ? '🌘 Eco' : '🌙 Notte';
+      }
+      if (typeof renderer !== 'undefined' && renderer) {
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, nightMode ? 1.15 : (isMobileViewport() ? 1.75 : 2)));
+      }
+      if (typeof width !== 'undefined' && typeof height !== 'undefined' && width && height) {
+        initGalaxyStars(width, height);
+      }
+    }
+
     const COUNTRY_COORDS = {
       'ITALIA': { lat: 41.9, lon: 12.5 },
       'USA': { lat: 39.8, lon: -98.5 },
